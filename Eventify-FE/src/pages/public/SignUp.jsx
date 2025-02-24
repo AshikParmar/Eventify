@@ -1,7 +1,8 @@
 import { useState } from "react";
-import axios from "axios";
+import { useDispatch } from "react-redux";
 import { toast } from "sonner";
 import { Link, useNavigate } from "react-router-dom";
+import { signupUser } from "../../redux/slices/userSlice";
 // import { Loader2 } from "lucide-react";
 
 const SignUp = () => {
@@ -10,7 +11,8 @@ const SignUp = () => {
     email: "",
     password: "",
   });
-  const [loading, setLoading] = useState(false);
+
+  const dispatch = useDispatch(); 
   const navigate = useNavigate();
 
   const changeEventHandler = (e) => {
@@ -24,36 +26,33 @@ const SignUp = () => {
       return;
     }
 
-    try {
-      setLoading(true);
-      const res = await axios.post("http://localhost:3000/user/signup", input, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        withCredentials: true,
-      });
-      if (res.data.success) {
+      try{  
+      const res = await dispatch(signupUser(input));
+
+      if (res.payload.success) {
         navigate("/user/login");
-        toast.success(res.data.message);
+        toast.success(res.payload.message);
         setInput({
           username: "",
           email: "",
           password: "",
         });
       }
-    } catch (error) {
-      console.log(error); 
-      toast.error(error.response.data.message);
-    } finally {
-      setLoading(false);
+      else{
+        console.log(error); 
+        toast.error(error.response.payload.message);
+      };
+    }
+    catch(e) {
+      console.error("internal error ", e.message);
     }
   };
+
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <div className="w-[90%] sm:w-full max-w-sm bg-white p-8 rounded-lg shadow-md">
         <h2 className="text-2xl font-bold text-center mb-6">SignUp</h2>
-        {/* {error && <div className="text-red-500 text-center mb-4">{error}</div>} */}
         <form onSubmit={signupHandler}>
           <div className="mb-4">
             <label htmlFor="username" className="block text-sm font-medium text-gray-700">Name</label>
@@ -61,12 +60,12 @@ const SignUp = () => {
               id="name"
               type="text"
               name="username"
-              className="w-full mt-2 p-2 border border-gray-300 rounded-md"
+              className="w-full mt-2 p-2 rounded-md"
               placeholder="Enter your name"
               value={input.username}
               onChange={changeEventHandler}
               required
-            />
+            > </input>
           </div>
           <div className="mb-4">
             <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>

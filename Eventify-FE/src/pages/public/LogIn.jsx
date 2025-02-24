@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
-import axios from "axios";
-import { toast } from "sonner";
+import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
+import { loginUser } from '../../redux/slices/userSlice';
 
 const LogIn = () => {
     const [input, setInput] = useState({
@@ -9,7 +10,7 @@ const LogIn = () => {
       password: "",
     });
 
-    const [loading, setLoading] = useState(false);
+    const dispatch = useDispatch();
     const navigate = useNavigate();
   
     const changeEventHandler = (e) => {
@@ -23,32 +24,28 @@ const LogIn = () => {
         toast.error("All fields are required!");
         return;
       }
-  
-      try {
-        setLoading(true);
-        const res = await axios.post("http://localhost:3000/user/signin", input, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        });
-        if (res.data.success) {
+      
+      try{ 
+        const res = await dispatch(loginUser(input));
+        if (res.payload.success) {
           navigate("/");
-          toast.success(res.data.message);
+          toast.success(res.payload.message);
           setInput({
             username: "",
             email: "",
             password: "",
           });
-          let data = res.data.user
+          let data = res.payload.user
           console.log('data: ', data);
+        }else{
+          console.log(res.payload.message); 
+          toast.error(res.payload.message);
         }
-      } catch (error) {
-        console.log(error); 
-        toast.error(error.response.data.message);
-      } finally {
-        setLoading(false);
       }
+      catch(e) {
+        console.error("internal error ", e.message);
+      }
+
     };
   
     return (
