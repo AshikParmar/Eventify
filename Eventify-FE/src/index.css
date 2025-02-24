@@ -1,4 +1,16 @@
 @import "tailwindcss";
+@import 'boxicons/css/boxicons.min.css';
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  /* background-color: gray !important; 
+  color: inherit !important; 
+  -webkit-box-shadow: 0 0 0px 0px rgb(210, 209, 209) inset !important;  */
+  transition: background-color 5000s ease-in-out 0s;
+}
+
 
 @theme {
   --color-blue: #043873;
