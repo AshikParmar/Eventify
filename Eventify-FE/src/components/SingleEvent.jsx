@@ -1,36 +1,14 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
 
-// Sample Data (Ideally, fetch this from the backend or global state)
-const eventsData = [
-  { 
-    id: 1, 
-    title: "Tech Conference 2025", 
-    date: "March 15, 2025", 
-    location: "New York", 
-    type: "Technology", 
-    price: "Free", 
-    description: "An exclusive conference for tech enthusiasts.", 
-    image: "https://via.placeholder.com/300" 
-  },
-  { 
-    id: 2, 
-    title: "Music Festival", 
-    date: "April 20, 2025", 
-    location: "Los Angeles", 
-    type: "Cultural", 
-    price: "$50", 
-    description: "A grand music festival featuring top artists.", 
-    image: "https://via.placeholder.com/300" 
-  }
-];
-
 const SingleEvent = () => {
+  const { events } = useSelector((state)=> state.event);
   const { id } = useParams();
   const navigate = useNavigate();
 
  
-  const event = eventsData.find(event => event.id === parseInt(id));
+  const event = events.find(event => event._id === id );
 
 
   return (
@@ -45,26 +23,36 @@ const SingleEvent = () => {
         {!event ? 
             <div className="p-6">Event not found.</div>
             :
-            <div className="bg-white shadow-md rounded-lg p-6">
+            <div className="bg-white flex text-lg shadow-md rounded-lg p-6">
                 <img 
                     src={event.image} 
                     alt={event.title} 
-                    className="w-full h-60 object-cover rounded-md mb-4" 
+                    className="w-[50%] h-[450px] object-cover rounded-md" 
                 />
-                <h2 className="text-3xl font-bold mb-2">{event.title}</h2>
-                <p className="font-semibold text-xl mb-2">{event.type}</p>
-                <p className="text-gray-600 mb-2">📅 Date: {event.date}</p>
-                <p className="text-gray-600 mb-2">📍 vanue: {event.location}</p>
-                <p className="text-gray-600 mb-2">💰 Price: {event.price}</p>
-                <p className="text-gray-800 mb-4">{event.description}</p>
+
+                <div className=" ml-10">
+                    <div className="flex gap-3 items-end">
+                        <h2 className="text-4xl font-semibold mb-2">{event.title} -</h2>
+                        <p className=" text-2xl mb-2"> {event.type}</p>
+
+                    </div>
+                  <p className="text-gray-700 mb-2 ">📅 Date: {event.date}</p>
+                  <p className="text-gray-700 mb-2 ml-8">Time: {event.startTime} to {event.endTime}</p>
+
+                  <p className="text-gray-700 mb-2">📍 venue: {event.venue}</p>
+                  <p className="text-gray-700 mb-2">💲 Price: {event.price}</p>
+                  <p className="text-gray-800 mb-2">Remaining Slots: {event.availableSlots}</p>
+                  <p className="text-gray-800 mb-2">{event.description}</p>
+                  
+                  
+                  <button 
+                      className="mt-6 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
+                      onClick={() => alert(`Enrolled in ${event.title}`)}
+                  >
+                      Enroll
+                  </button>
+                </div>
                 
-                
-                <button 
-                    className="mt-4 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
-                    onClick={() => alert(`Enrolled in ${event.title}`)}
-                >
-                    Enroll
-                </button>
             </div>
         }
     </div>

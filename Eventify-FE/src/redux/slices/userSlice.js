@@ -4,6 +4,7 @@ import axios from "axios";
 const API_URL = "http://localhost:3000/user";
 
 const storedUser = JSON.parse(localStorage.getItem("user")) || null;
+const token = localStorage.getItem("token") || null;
 
 // Signup Action
 export const signupUser = createAsyncThunk(
@@ -11,7 +12,7 @@ export const signupUser = createAsyncThunk(
   async (userData, { rejectWithValue }) => {
     try {
       const response = await axios.post(`${API_URL}/signup`, userData);
-      return response.data; // Assume backend returns { message: "User created" }
+      return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
@@ -24,36 +25,50 @@ export const loginUser = createAsyncThunk(
   async (credentials, { rejectWithValue }) => {
     try {
       const response = await axios.post(`${API_URL}/signin`, credentials);
-      const { user, token } = response.data; 
-      localStorage.setItem("user", JSON.stringify({ user, token })); 
-      return response.data;
+  
+      // console.log('Full response:', response);
+      // console.log('Response data:', response.data);
+
+     
+      const { user, accessToken } = response.data;
+      // console.log('User:', user);
+      // console.log('Access Token:', accessToken);
+
+      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("token", accessToken);
+
+
+      return response.data;  
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      console.error('Error in loginUser:', error.response?.data || error.message);
+      return rejectWithValue(error.response?.data || "An unknown error occurred");
     }
   }
 );
 
+
+
 const userSlice = createSlice({
   name: "user",
   initialState: {
-    user: storedUser?.user || null,
-    token: storedUser?.token || null,
+    user: storedUser|| null,
+    token: token || null,
     isAuthenticated: !!storedUser,
     loading: false,
     error: null,
   },
   reducers: {
     logout: (state) => {
-      state.username = null;
+      state.user = null; 
       state.token = null;
       state.isAuthenticated = false;
       localStorage.removeItem("user");
+      localStorage.removeItem("token");
     },
   },
   
   extraReducers: (builder) => {
     builder
-      // Signup Reducers
       .addCase(signupUser.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -66,15 +81,14 @@ const userSlice = createSlice({
         state.error = action.payload?.message || "Signup failed";
       })
 
-      // Login Reducers
       .addCase(loginUser.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload.user;
-        state.token = action.payload.token;
+        state.user = action.payload.user; 
+        state.token = action.payload.accessToken; 
         state.isAuthenticated = true;
       })
       .addCase(loginUser.rejected, (state, action) => {
