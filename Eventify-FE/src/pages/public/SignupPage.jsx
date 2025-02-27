@@ -126,7 +126,7 @@ const SignupPage = () => {
                             onClick={() => setShowPassword(!showPassword)}
                             >
                               
-                              {showPassword ? <i class="bx bx-lock-open-alt text-gray-700 text-xl"></i>
+                              {showPassword ? <i className="bx bx-lock-open-alt text-gray-700 text-xl"></i>
                                 :<i className="bx bx-lock text-gray-700 text-xl"></i>}
                             </button>
                         </div>

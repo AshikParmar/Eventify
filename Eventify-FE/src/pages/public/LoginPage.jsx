@@ -29,16 +29,34 @@ const LoginPage = () => {
     
     try{ 
       const res = await dispatch(loginUser(input));
+      // console.log('res: ', res);
+
+      if (!res.payload) {
+        console.error("No payload returned. Full response:", res);
+        toast.error("Login failed. Please try again.");
+        return;
+      }
+
+      console.log("response",res);
       if (res.payload.success) {
-        navigate("/");
+        // console.log("here")
+
+        if(res.payload.user.role == "Admin"){ 
+          console.log("here")
+          navigate("/admin");
+        }
+        else{
+          navigate("/");
+        }
+        
         toast.success(res.payload.message);
         setInput({
           username: "",
           email: "",
           password: "",
         });
-        let data = res.payload.user
-        console.log('data: ', data);
+        // let = res.payload
+        // console.log('data: ', data);
       }else{
         console.log(res.payload.message); 
         toast.error(res.payload.message);
@@ -108,7 +126,7 @@ const LoginPage = () => {
                             onClick={() => setShowPassword(!showPassword)}
                             >
                               
-                              {showPassword ? <i class="bx bx-lock-open-alt text-gray-700 text-xl"></i>
+                              {showPassword ? <i className="bx bx-lock-open-alt text-gray-700 text-xl"></i>
                                 :<i className="bx bx-lock text-gray-700 text-xl"></i>}
                             </button>
                         </div>
