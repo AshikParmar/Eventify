@@ -1,13 +1,12 @@
-import React, { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React from "react";
+import { useSelector } from "react-redux";
 
 const UsersList = () => {
-//  debugger;
 
   const { users, loading, error } = useSelector((state)=> state.userList);
   // console.log("users",users)
 
-  if (loading) return <p>Loading events...</p>;
+  if (loading) return <p>Loading Users...</p>;
   if (error) return <p className="text-red-500">Error: {error}</p>;
 
   return (

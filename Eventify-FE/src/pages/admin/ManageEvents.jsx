@@ -3,13 +3,13 @@ import Button from "../../components/ui/button";
 import { Plus, Edit, Trash2, FileText } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteEvent, fetchEvents } from "../../redux/slices/eventSlice";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
+import { useGlobalUI } from "../../components/Globel/GlobalUIContext";
 
-const ManageEvents = ({ set }) => {
-  const navigate = useNavigate();
-
+const ManageEvents = () => {
+  const { showSnackbar, showDialog } = useGlobalUI();
   const { events, loading, error } = useSelector((state) => state.event);
-
+ 
   const dispatch = useDispatch();
 
   const fetchData = () => {
@@ -22,10 +22,10 @@ const ManageEvents = ({ set }) => {
 
   // Delete row handler
   const onDeleteEvent = async (event) => {
-    // showDialog(
-    //   "Confirm Deletion",
-    //   `Are you sure you want to delete the : ${event.title} event?`,
-    //   async () => {
+    showDialog(
+      "Confirm Deletion",
+      `Are you sure you want to delete the : ${event.title} event?`,
+      async () => {
     try {
       await dispatch(deleteEvent(event._id)).unwrap();
       showSnackbar("Event deleted successfully!", "success");
@@ -38,8 +38,22 @@ const ManageEvents = ({ set }) => {
       );
     }
   }
-  //   );
-  // };
+    );
+  };
+
+  if(loading){
+
+    // console.log("loading")
+    return <div className="h-[80%] flex items-center justify-center ">
+      <h2 className="font-bold">Loading...</h2>
+    </div>
+  }
+  else if(error){
+    console.log(error)
+    return <div className="h-[80%] flex items-center justify-center ">
+      <p className="text-red-500">Error: {error}</p>
+    </div>
+  }
 
 
 

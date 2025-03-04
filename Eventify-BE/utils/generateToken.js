@@ -6,21 +6,21 @@ dotenv.config()
 export const generateTokens = async (
   email,
   userId,
- role
+  role
 ) => {
   try {
     if (!email || !userId) {
       throw new Error("Email and userId are required to generate tokens");
     }
 
-    const accessTokenExpiry = process.env.ACCESS_TOKEN_EXPIRY ||"30d" ;
+    const accessTokenExpiry = process.env.ACCESS_TOKEN_EXPIRY || "30d";
     const refreshTokenExpiry = process.env.REFRESH_TOKEN_EXPIRY || "30d";
     const payload = {
       email,
       id: userId,
       role
     };
-    
+
     const [accessToken, refreshToken] = [
       jwt.sign(payload, process.env.ACCESS_TOKEN_PRIVATE_KEY, {
         expiresIn: accessTokenExpiry,
@@ -30,7 +30,7 @@ export const generateTokens = async (
       }),
     ];
 
-    
+
 
     await Token.deleteMany({ userId });
 

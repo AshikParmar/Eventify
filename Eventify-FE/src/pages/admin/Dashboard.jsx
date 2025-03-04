@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import Card from "../../components/ui/card";
 import { Plus, Calendar, Users, Activity, CloudHail } from "lucide-react";
-import TotalEvents from "../../components/dashboardTables/TotalEventsTable";
-import UsersList from "../../components/dashboardTables/UsersList";
-import UpcomingEvents from "../../components/dashboardTables/UpcomingEventsTable";
+import TotalEvents from "../../components/admin/dashboardTables/TotalEventsTable";
+import UsersList from "../../components/admin/dashboardTables/UsersList";
+import UpcomingEvents from "../../components/admin/dashboardTables/UpcomingEventsTable";
 import { useSelector,useDispatch } from "react-redux";
 import { fetchEvents } from "../../redux/slices/eventSlice";
 import { fetchUsers } from "../../redux/slices/userListSlice";
@@ -48,15 +48,6 @@ const Dashboard = () => {
         <div onClick={()=>setActiveTable("upcoming")}><Card title="Upcoming Events" value={ucEvents.length} icon={<Activity />} /></div>
       </div>
 
-      {/* Quick Actions */}
-      {/* <div className="flex space-x-4">
-        <button className="bg-blue-600 text-white px-4 py-2 rounded-md flex items-center">
-          <Plus className="mr-2" /> Add New Event
-        </button>
-        <button className="bg-gray-700 text-white px-4 py-2 rounded-md">
-          Manage Users
-        </button>
-      </div> */}
 
       {renderTable()}
       
