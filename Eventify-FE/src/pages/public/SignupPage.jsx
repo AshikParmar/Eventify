@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { toast } from "sonner";
 import { Link, useNavigate } from "react-router-dom";
 import { signupUser } from "../../redux/slices/userSlice";
+import { useGlobalUI } from "../../components/Globel/GlobalUIContext";
 // import { Loader2 } from "lucide-react";
 
 const SignupPage = () => {
+  const { showSnackbar } = useGlobalUI();
   const [input, setInput] = useState({
     username: "",
     email: "",
@@ -23,7 +24,7 @@ const SignupPage = () => {
   const signupHandler = async (e) => {
     e.preventDefault();
     if (!input.username || !input.email || !input.password) {
-      toast.error("All fields are required!");
+      showSnackbar("All fields are required!", "error");
       return;
     }
 
@@ -31,17 +32,18 @@ const SignupPage = () => {
       const res = await dispatch(signupUser(input));
 
       if (res.payload.success) {
-        navigate("/user/login");
-        toast.success(res.payload.message);
+        
+        showSnackbar(res.payload.message, "success");
         setInput({
           username: "",
           email: "",
           password: "",
         });
+        navigate("/login");
       }
       else{
-        console.log(error); 
-        toast.error(error.response.payload.message);
+        console.log("error"); 
+        showSnackbar(res.payload.message, "error");
       };
     }
     catch(e) {
@@ -62,7 +64,7 @@ const SignupPage = () => {
                 </p>
                 <p className="flex gap-2 items-center justify-center mt-10 text-center">
                 <span>Already Have an Account?</span>
-                <Link to='/user/login' className="underline">Log In</Link>
+                <Link to='/login' className="underline">Log In</Link>
                 </p>
                 <p className="mt-6 text-sm text-center text-gray-300">
                 Read our <a href="#" className="underline">terms</a> and <a href="#" className="underline">conditions</a>

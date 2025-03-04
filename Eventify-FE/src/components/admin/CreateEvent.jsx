@@ -3,8 +3,11 @@ import { useDispatch } from "react-redux";
 import { addEvent } from "../../redux/slices/eventSlice";
 import { useNavigate } from "react-router-dom";
 import { X } from "lucide-react";
+import { useGlobalUI } from "../Globel/GlobalUIContext";
 
 const CreateEvent = () => {
+    const [loading, setLoading] = useState(false);
+    const { showSnackbar } = useGlobalUI();
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const eventTypes = [
@@ -46,9 +49,9 @@ const CreateEvent = () => {
 
                 const reader = new FileReader();
                 reader.onloadend = () => {
-                    setImagePreview(reader.result); // Set preview URL correctly
+                    setImagePreview(reader.result);
                 };
-                reader.readAsDataURL(file); // ✅ Use "file" instead of formData.image
+                reader.readAsDataURL(file);
             }
         } else {
             setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -57,18 +60,19 @@ const CreateEvent = () => {
     };
 
     const handleRemoveImage = () => {
-        setImagePreview(null); // Remove preview
-        setFormData({ ...formData, image: null }); // Reset form data
+        setImagePreview(null);
+        setFormData({ ...formData, image: null });
 
-        // Reset input field value
+
         if (fileInputRef.current) {
-            fileInputRef.current.value = ""; // Clears input field
+            fileInputRef.current.value = "";
         }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        setLoading(true);
         const data = new FormData();
         Object.keys(formData).forEach((key) => {
             data.append(key, formData[key]);
@@ -78,13 +82,18 @@ const CreateEvent = () => {
             const response = await dispatch(addEvent(data));
             console.log(response);
             // console.log("Form Submitted", formData);
-            alert("Event created successfully!");
+            showSnackbar("Event created successfully!", "success");
             navigate(-1);
         }
         catch (e) {
             console.log(e.messege);
         }
+        finally {
+            setLoading(false);
+        }
     };
+
+
 
     return (
         <div className="m-10 p-6 bg-white shadow-lg rounded-lg ">
@@ -244,7 +253,7 @@ const CreateEvent = () => {
                     <input
                         type="file"
                         name="image"
-                        ref={fileInputRef} 
+                        ref={fileInputRef}
                         className="bg-gray-300 p-2 rounded-sm"
                         onChange={handleChange}
                         accept="image/*"
@@ -281,6 +290,17 @@ const CreateEvent = () => {
                     </button>
                 </div>
             </form>
+
+            {loading && (
+            
+                <div className="fixed flex items-center justify-center bg-white bg-opacity-10">
+                    <div className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center">
+                        <p className="text-lg font-semibold">Uploading...</p>
+                        <div className="w-10 h-10 border-4 border-blue-500 border-dotted rounded-full animate-spin mt-3"></div>
+                    </div>
+                </div>
+            )}
+
 
         </div>
     );

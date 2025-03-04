@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import { loginUser } from '../../redux/slices/userSlice';
+import { useGlobalUI } from "../../components/Globel/GlobalUIContext";
+  
 
 const LoginPage = () => {
-
+  const { showSnackbar } = useGlobalUI();
   const [showPassword, setShowPassword] = useState(false);
   const [input, setInput] = useState({
     email: "",
@@ -20,10 +21,9 @@ const LoginPage = () => {
   };
   
   const handleSubmit = async (e) => {
-    // debugger;
     e.preventDefault();
     if (!input.email || !input.password) {
-      toast.error("All fields are required!");
+      showSnackbar("All fields are required!", "error");
       return;
     }
     
@@ -33,33 +33,29 @@ const LoginPage = () => {
 
       if (!res.payload) {
         console.error("No payload returned. Full response:", res);
-        toast.error("Login failed. Please try again.");
+        
+        showSnackbar(res.payload.message, "error");
         return;
       }
 
       console.log("response",res);
       if (res.payload.success) {
-        // console.log("here")
 
-        if(res.payload.user.role == "Admin"){ 
-          console.log("here")
-          navigate("/admin");
-        }
-        else{
-          navigate("/");
-        }
         
-        toast.success(res.payload.message);
+        showSnackbar(res.payload.message, "success");
         setInput({
           username: "",
           email: "",
           password: "",
         });
-        // let = res.payload
-        // console.log('data: ', data);
+
+        
+          navigate("/");
+        
+        
       }else{
         console.log(res.payload.message); 
-        toast.error(res.payload.message);
+        showSnackbar(res.payload.message, "error");
       }
     }
     catch(e) {
@@ -81,7 +77,7 @@ const LoginPage = () => {
                 </p>
                 <p className="flex gap-2 items-center justify-center mt-10 text-center">
                 <span>New Here?</span>
-                <Link to='/user/signup' className="underline">Sign Up</Link>
+                <Link to='/signup' className="underline">Sign Up</Link>
                 </p>
                 <p className="mt-6 text-sm text-center text-gray-300">
                 Read our <a href="#" className="underline">terms</a> and <a href="#" className="underline">conditions</a>
@@ -126,8 +122,8 @@ const LoginPage = () => {
                             onClick={() => setShowPassword(!showPassword)}
                             >
                               
-                              {showPassword ? <i className="bx bx-lock-open-alt text-gray-700 text-xl"></i>
-                                :<i className="bx bx-lock text-gray-700 text-xl"></i>}
+                              {showPassword ? (<i className="bx bx-lock-open-alt text-gray-700 text-xl"></i>)
+                                :(<i className="bx bx-lock text-gray-700 text-xl"></i>)}
                             </button>
                         </div>
                     </div>

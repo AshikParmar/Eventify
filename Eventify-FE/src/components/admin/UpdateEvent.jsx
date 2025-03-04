@@ -3,13 +3,16 @@ import { useDispatch, useSelector } from "react-redux";
 import { updateEvent } from "../../redux/slices/eventSlice";
 import { useNavigate, useParams } from "react-router-dom";
 import { X } from "lucide-react";
+import { useGlobalUI } from "../Globel/GlobalUIContext";
 
 const UpdateEvent = () => {
+   
+    const { showSnackbar } = useGlobalUI();
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { id } = useParams(); // Get event ID from URL params
-        const [imagePreview, setImagePreview] = useState(null);
-        const fileInputRef = useRef(null);
+    const [imagePreview, setImagePreview] = useState(null);
+    const fileInputRef = useRef(null);
 
     const eventTypes = [
         "Technical",
@@ -28,7 +31,7 @@ const UpdateEvent = () => {
     useEffect(() => {
         existingEvent = events.find((event) => event._id === id);
     }, [])
-    
+
 
     const [formData, setFormData] = useState({
         title: "",
@@ -49,6 +52,7 @@ const UpdateEvent = () => {
         existingEvent = events.find((event) => event._id === id);
         if (existingEvent) {
             setFormData(existingEvent);
+            setImagePreview(existingEvent.image);
         }
     }, []);
 
@@ -82,26 +86,32 @@ const UpdateEvent = () => {
     };
 
     const handleSubmit = async (e) => {
+        
         e.preventDefault();
 
         const updatedEvent = new FormData();
-
         Object.keys(formData).forEach((key) => {
             updatedEvent.append(key, formData[key]);
         });
 
         try {
-            console.log("FormData content:", Object.fromEntries(updatedEvent.entries()));
+            // console.log("FormData content:", Object.fromEntries(updatedEvent.entries()));
             const response = await dispatch(updateEvent(updatedEvent));
             console.log(response);
-           
-            alert("Event updated successfully!");
+
+          
+            showSnackbar("Event updated successfully!", "success");
             navigate(-1);
         } catch (error) {
             console.error("Error updating event:", error);
-            alert("Failed to update event!");
+            showSnackbar("Failed to update event!", "error");
         }
     };
+
+
+
+    // if (loading) return <p>Loading events...</p>;
+    // if (error) return <p className="text-red-500">Error: {error}</p>;
 
     return (
         <div className="m-10 p-6 bg-white shadow-lg rounded-lg">
@@ -235,6 +245,7 @@ const UpdateEvent = () => {
                         type="number"
                         name="price"
                         placeholder="Enter price"
+                        value={formData.price}
                         className="bg-gray-300 w-50 p-2 rounded-sm"
                         onChange={handleChange}
                     />
@@ -294,6 +305,20 @@ const UpdateEvent = () => {
                     </button>
                 </div>
             </form>
+
+            {loading && (
+
+                <div className="fixed flex items-center justify-center bg-white bg-opacity-10">
+                    <div className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center">
+                        <p className="text-lg font-semibold">Uploading...</p>
+                        <div className="w-10 h-10 border-4 border-blue-500 border-dotted rounded-full animate-spin mt-3"></div>
+                    </div>
+                </div>
+            )}
+
+            {error && (
+                <p className="text-red-500">Error: {error}</p>
+            )}
         </div>
     );
 };
