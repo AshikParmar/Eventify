@@ -10,10 +10,10 @@ import { fetchUsers } from "../../redux/slices/userListSlice";
 
 const Dashboard = () => {
 
-  const { events , ucEvents } = useSelector((state) => state.event);
+  const { events , pendingEvents } = useSelector((state) => state.event);
   const { users } = useSelector((state) => state.userList);
   // console.log("events", events);
-  // console.log("ucEvents",ucEvents);
+  // console.log("pendingEvents",pendingEvents);
 
   const [activeTable, setActiveTable] = useState("upcoming");
   const dispatch = useDispatch();
@@ -45,7 +45,7 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div onClick={()=>setActiveTable("events")}><Card title="Total Events" value={events.length} icon={<Calendar />} /></div>
         <div onClick={()=>setActiveTable("users")}><Card title="Users Enrolled" value={users.length} icon={<Users />} /></div>
-        <div onClick={()=>setActiveTable("upcoming")}><Card title="Upcoming Events" value={ucEvents.length} icon={<Activity />} /></div>
+        <div onClick={()=>setActiveTable("upcoming")}><Card title="Upcoming Events" value={pendingEvents.length} icon={<Activity />} /></div>
       </div>
 
 

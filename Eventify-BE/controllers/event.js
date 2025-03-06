@@ -5,7 +5,7 @@ import { uploadToCloudinary } from "../services/cloudinary.js";
 // Create Event
 export const createEvent = async (req, res) => {
     try {
-        const { title, type, venue, date, startTime, endTime, totalSlots } = req.body;
+        const { title, type, venue, date, startTime, endTime, price, totalSlots } = req.body;
 
         if (!title || !type || !venue || !date || !startTime || !endTime || !totalSlots) {
             return res.status(400).json({ success: false, message: "All fields are required" });
@@ -23,7 +23,10 @@ export const createEvent = async (req, res) => {
         }
 
         const userId = req.userId
-        const event = new Event({ ...req.body, organizer: userId,image: imageUrl });
+
+        const eventPrice = price || "Free";
+
+        const event = new Event({ ...req.body, price:eventPrice , organizer: userId,image: imageUrl });
         await event.save();
         res.status(201).json({ success: true, data: event });
     } catch (error) {
@@ -41,11 +44,11 @@ export const getEvents = async (req, res) => {
         const currDate = Date.now();
         // console.log(currDate);
 
-        const ucEvents = events?.filter((event) => {
+        const pendingEvents = events?.filter((event) => {
             const eventTimestamp = new Date(event.date).getTime();
             return eventTimestamp > currDate;
         });
-        res.status(200).json({ success: true, data: { events, ucEvents} });
+        res.status(200).json({ success: true, data: { events, pendingEvents} });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
@@ -84,7 +87,9 @@ export const updateEvent = async (req, res) => {
 
         // Extract fields to update
         const { title, type, venue, date, duration, startTime, endTime, totalSlots, availableSlots , price , description } = req.body;
-        let updatedFields = { title, type, venue, date, duration, startTime, endTime, totalSlots,availableSlots , price, description };
+        const eventPrice = price || "Free";
+
+        let updatedFields = { title, type, venue, date, duration, startTime, endTime, totalSlots,availableSlots , price:eventPrice, description };
 
         // Handle Image Upload if a new image is provided
         if (req.file) {

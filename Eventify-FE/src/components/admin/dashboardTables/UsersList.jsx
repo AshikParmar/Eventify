@@ -1,12 +1,13 @@
 import React from "react";
 import { useSelector } from "react-redux";
+import Loading from "../../ui/Loading";
 
 const UsersList = () => {
 
   const { users, loading, error } = useSelector((state)=> state.userList);
   // console.log("users",users)
 
-  if (loading) return <p>Loading Users...</p>;
+  if (loading) return <Loading title="Loading Users..."/>
   if (error) return <p className="text-red-500">Error: {error}</p>;
 
   return (

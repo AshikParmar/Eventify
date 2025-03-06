@@ -1,12 +1,13 @@
 import React from "react";
 import { useSelector } from "react-redux";
+import Loading from "../../ui/Loading";
 
 const UpcomingEvents = () => {
 
-    const { ucEvents, loading, error } = useSelector((state) => state.event);
+    const { pendingEvents, loading, error } = useSelector((state) => state.event);
     
 
-    if (loading) return <p>Loading events...</p>;
+    if (loading) return <Loading title="Loading events..."/>
     if (error) return <p className="text-red-500">Error: {error}</p>;
 
   return (
@@ -23,7 +24,7 @@ const UpcomingEvents = () => {
             </tr>
           </thead>
           <tbody>
-            {ucEvents.map((event)=>{
+            {pendingEvents.map((event)=>{
               return  <tr key={event._id} className="border-b">
                         <td className="p-3">{event.title}</td>
                         <td className="p-3">{event.date}</td>

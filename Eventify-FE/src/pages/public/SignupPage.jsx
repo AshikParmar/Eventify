@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { signupUser } from "../../redux/slices/userSlice";
-import { useGlobalUI } from "../../components/Globel/GlobalUIContext";
-// import { Loader2 } from "lucide-react";
+import { useGlobalUI } from "../../components/Global/GlobalUIContext";
+
 
 const SignupPage = () => {
   const { showSnackbar } = useGlobalUI();
