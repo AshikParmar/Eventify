@@ -3,10 +3,13 @@ import { useDispatch } from "react-redux";
 import { addEvent } from "../../redux/slices/eventSlice";
 import { useNavigate } from "react-router-dom";
 import { X } from "lucide-react";
-import { useGlobalUI } from "../Globel/GlobalUIContext";
+import { useGlobalUI } from "../Global/GlobalUIContext";
+import Loading from "../ui/Loading";
 
 const CreateEvent = () => {
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
+
     const { showSnackbar } = useGlobalUI();
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -24,6 +27,7 @@ const CreateEvent = () => {
 
     const [imagePreview, setImagePreview] = useState(null);
     const fileInputRef = useRef(null);
+
 
     const [formData, setFormData] = useState({
         title: "",
@@ -68,35 +72,55 @@ const CreateEvent = () => {
             fileInputRef.current.value = "";
         }
     };
-
     const handleSubmit = async (e) => {
+
         e.preventDefault();
 
-        setLoading(true);
-        const data = new FormData();
-        Object.keys(formData).forEach((key) => {
-            data.append(key, formData[key]);
-        });
-
         try {
+
+            setLoading(true);
+            setError("");
+
+            const data = new FormData();
+            Object.keys(formData).forEach((key) => {
+                data.append(key, formData[key]);
+            });
+
             const response = await dispatch(addEvent(data));
             console.log(response);
-            // console.log("Form Submitted", formData);
-            showSnackbar("Event created successfully!", "success");
-            navigate(-1);
+
+            if (response.payload.success) {
+                showSnackbar("Event created successfully!", "success");
+                navigate(-1);
+            }
+            else if (!response.payload.success) {
+                showSnackbar(response?.payload?.messege, "error");
+                setError(response?.payload?.messege);
+            }
         }
         catch (e) {
             console.log(e.messege);
+            setError(e.messege);
         }
         finally {
             setLoading(false);
         }
     };
 
+    if (loading) {
+        return (
+          <div className="h-full flex items-center justify-center">
+           <Loading title="Creating.." />
+          </div>
+        );
+      } 
 
 
     return (
         <div className="m-10 p-6 bg-white shadow-lg rounded-lg ">
+            {error && (
+                <p className="text-red-500">Error: {error}</p>
+            )}
             <h2 className="text-2xl font-bold mb-6 text-center">Create Event</h2>
             <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
                 {/* Event Title */}
@@ -154,20 +178,26 @@ const CreateEvent = () => {
                         <input
                             type="date"
                             name="date"
+                            min={new Date().toISOString().split("T")[0]}
                             className="bg-gray-300 p-2 rounded-sm"
                             onChange={handleChange}
                             required
                         />
                     </div>
                     <div className="flex flex-col">
-                        <label className="text-gray-700 font-medium">Duration</label>
+
+                        <label className="text-gray-700 font-medium">Duration <span
+                            className="text-xs italic text-gray-500 cursor-help"
+                            title="You can leave this empty."
+                        >
+                            (Optional)
+                        </span></label>
                         <input
                             type="text"
                             name="duration"
                             placeholder="Duration (e.g., 2 Days)"
                             className="bg-gray-300 p-2 rounded-sm"
                             onChange={handleChange}
-                            required
                         />
                     </div>
                 </div>
@@ -210,6 +240,7 @@ const CreateEvent = () => {
                         />
                     </div>
                     <div className="flex flex-col">
+
                         <label className="text-gray-700 font-medium">Available Slots</label>
                         <input
                             type="number"
@@ -225,7 +256,13 @@ const CreateEvent = () => {
 
                 {/* Event Price */}
                 <div className="flex flex-col">
-                    <label className="text-gray-700 font-medium">Ticket Price</label>
+
+                    <label className="text-gray-700 font-medium">Ticket Price <span
+                        className="text-xs italic text-gray-500 cursor-help"
+                        title="You can leave this empty if the ticket is free."
+                    >
+                        (Optional)
+                    </span></label>
                     <input
                         type="number"
                         name="price"
@@ -249,7 +286,12 @@ const CreateEvent = () => {
 
                 {/* Upload Image */}
                 <div className="flex flex-col ">
-                    <label className="text-gray-700 font-medium">Upload Image</label>
+                    <label className="text-gray-700 font-medium">Upload Image <span
+                        className="text-xs italic text-gray-500 cursor-help"
+                        title="You can leave this empty."
+                    >
+                        (Optional)
+                    </span></label>
                     <input
                         type="file"
                         name="image"
@@ -290,16 +332,6 @@ const CreateEvent = () => {
                     </button>
                 </div>
             </form>
-
-            {loading && (
-            
-                <div className="fixed flex items-center justify-center bg-white bg-opacity-10">
-                    <div className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center">
-                        <p className="text-lg font-semibold">Uploading...</p>
-                        <div className="w-10 h-10 border-4 border-blue-500 border-dotted rounded-full animate-spin mt-3"></div>
-                    </div>
-                </div>
-            )}
 
 
         </div>

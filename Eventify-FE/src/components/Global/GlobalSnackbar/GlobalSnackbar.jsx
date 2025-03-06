@@ -3,17 +3,24 @@ import { Snackbar, Alert } from "@mui/material";
 
 const GlobalSnackbar = ({
   open,
-  message = "", 
-  severity = "info", 
+  message = "",
+  severity = "info",
   onClose,
   duration = 3000,
 }) => {
   return (
-    <Snackbar open={open} autoHideDuration={duration} onClose={onClose} anchorOrigin={{ vertical: "top", horizontal: "right" }}>
+    <Snackbar
+      open={open}
+      autoHideDuration={duration}
+      onClose={onClose}
+      anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      sx={{ top: "15% !important" }} // Add this line
+    >
       <Alert onClose={onClose} severity={severity} sx={{ width: "100%" }}>
-        {message || "Something went wrong!"} 
+        {message || "Something went wrong!"}
       </Alert>
     </Snackbar>
+
   );
 };
 

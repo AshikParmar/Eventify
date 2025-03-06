@@ -3,7 +3,7 @@ import SingleEvent from '../SingleEvent'
 import { useNavigate, useParams } from 'react-router-dom'
 import { deleteEvent } from '../../redux/slices/eventSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import { useGlobalUI } from '../Globel/GlobalUIContext';
+import { useGlobalUI } from '../Global/GlobalUIContext';
 
 const ViewEvent = () => {
   const { id } = useParams();

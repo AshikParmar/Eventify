@@ -24,7 +24,7 @@ const Footer = () => {
           <h2 className="text-xl font-bold mb-2">Contact Us</h2>
           <p className="text-sm text-gray-200">📍 SCE, Sola, Ahmedabad, Gujarat</p>
           <p className="text-sm text-gray-200">📞 +1 234 567 890</p>
-          <p className="text-sm text-gray-200">📧 support@eventify.com</p>
+          <p className="text-sm text-gray-200">📧 eventify.feedback@gmail.com</p>
         </div>
 
         {/* Quick Links Section */}

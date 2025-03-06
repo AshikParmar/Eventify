@@ -5,7 +5,7 @@ import App from "./App";
 import { Provider } from "react-redux";
 import { persistor, store } from "./redux/store";
 import { PersistGate } from "redux-persist/integration/react";
-import { GlobalUIProvider } from "./components/Globel/GlobalUIContext";
+import { GlobalUIProvider } from "./components/Global/GlobalUIContext";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>

@@ -21,6 +21,10 @@ import ViewEvent from "./components/admin/ViewEvent";
 import ContactUs from "./pages/public/ContactUs";
 import AboutUs from "./pages/public/AboutUs";
 import UserProfile from "./pages/user/UserProfile";
+import OrderSummary from "./pages/user/OrderSummary";
+import PaymentSummary from "./pages/user/PaymentSummary";
+import ForgotPassword from "./pages/public/ForgotPassword";
+import ResetPassword from "./pages/public/ResetPassword";
 
 function App() {
   const user = useSelector(state => state.user.user);
@@ -52,6 +56,8 @@ function App() {
               <>
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/signup" element={<SignupPage />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/reset-password/:token" element={<ResetPassword />} />
                 <Route path="/" element={<Navigate to="/login" />} />
               </>
             ) : (
@@ -60,7 +66,9 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/events" element={<Events />} />
                 <Route path="/events/:id" element={<SingleEvent />} />
-                <Route path="/user" element={<UserProfile />} />
+                {/* <Route path="/events/:id/ordersummary" element={<OrderSummary />} />
+                <Route path="/events/:id/ordersummary/paymentsummary" element={<PaymentSummary />} /> */}
+                <Route path="/user/*" element={<UserProfile />} />
               </>
             )}
             {/* Always Accessible Routes */}

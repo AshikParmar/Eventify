@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useGlobalUI } from '../../components/Globel/GlobalUIContext';
+import { useGlobalUI } from '../../components/Global/GlobalUIContext';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 

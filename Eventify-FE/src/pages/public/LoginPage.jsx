@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { loginUser } from '../../redux/slices/userSlice';
-import { useGlobalUI } from "../../components/Globel/GlobalUIContext";
+import { useGlobalUI } from "../../components/Global/GlobalUIContext";
   
 
 const LoginPage = () => {
@@ -77,8 +77,9 @@ const LoginPage = () => {
                 </p>
                 <p className="flex gap-2 items-center justify-center mt-10 text-center">
                 <span>New Here?</span>
-                <Link to='/signup' className="underline">Sign Up</Link>
+                <Link to='/signup' className="underline hover:text-blue">Sign Up</Link>
                 </p>
+                <p className="text-center"><Link to="/forgot-password?" className="underline hover:text-blue">forgot-password?</Link></p>
                 <p className="mt-6 text-sm text-center text-gray-300">
                 Read our <a href="#" className="underline">terms</a> and <a href="#" className="underline">conditions</a>
                 </p>
@@ -118,7 +119,7 @@ const LoginPage = () => {
 
                             <button
                             type="button"
-                            className="mr-3"
+                            className="mr-3 cursor-pointer"
                             onClick={() => setShowPassword(!showPassword)}
                             >
                               

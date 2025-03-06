@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useGlobalUI } from "../../components/Globel/GlobalUIContext";
+import { useGlobalUI } from "../../components/Global/GlobalUIContext";
 import { changePassword, updateUser } from "../../redux/slices/userSlice";
+import Loading from "../../components/ui/Loading";
 // import { updateUser } from "../redux/userSlice"; // Ensure you have this action in your Redux slice
 
 const ProfileSection = () => {
@@ -86,17 +87,12 @@ const ProfileSection = () => {
 
   return (
     <div>
-      <section className="bg-white p-6 rounded-lg shadow-lg mb-6">
+      <section className="md:bg-white md:p-6 p-4 rounded-lg md:shadow-lg mb-6">
         <h2 className="text-xl font-semibold mb-4">Profile Information</h2>
         {editMode ? (
           loading ? 
           (
-            <div className="min-h-60 flex items-center justify-center bg-white bg-opacity-10">
-              <div className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center">
-                <p className="text-lg font-semibold">Updating...</p>
-                <div className="w-10 h-10 border-4 border-blue-500 border-dotted rounded-full animate-spin mt-3"></div>
-              </div>
-            </div>
+            <Loading title="Updating..."/>
           ) 
           :
           (<form onSubmit={handleFormSubmit} className="space-y-4">
@@ -133,7 +129,7 @@ const ProfileSection = () => {
             <button onClick={() => setEditMode(true)} className="bg-gray-600 text-white p-2 rounded mt-4 mr-4">
               Edit Profile
             </button>
-            <button onClick={() => SetEditPassword(true)} className="bg-gray-600 text-white p-2 rounded mt-4">
+            <button onClick={() => SetEditPassword(!editPassword)} className="bg-gray-600 text-white p-2 rounded mt-4">
               Change Password
             </button>
           </div>
@@ -151,7 +147,7 @@ const ProfileSection = () => {
             </div>
           </div>
         ) : (
-          <section className="bg-white p-6 rounded-lg shadow-lg mb-6">
+          <section className="bg-white p-6 rounded-lg shadow-lg md:mb-6 md:m-0 m-4">
             <form onSubmit={handlePasswordChange} className="space-y-4">
               <div className="flex flex-col gap-1">
                 <label className="text-gray-700 font-medium">Old Password</label>
@@ -160,7 +156,7 @@ const ProfileSection = () => {
                   name="oldPassword"
                   value={passDetails.oldPassword}
                   onChange={handleChange}
-                  className="w-96 p-2 border rounded"
+                  className="md:w-96 p-2 border rounded"
                   required
                 />
               </div>
@@ -171,7 +167,7 @@ const ProfileSection = () => {
                   name="newPassword"
                   value={passDetails.newPassword}
                   onChange={handleChange}
-                  className="w-96 p-2 border rounded"
+                  className="md:w-96 p-2 border rounded"
                   required
                 />
               </div>

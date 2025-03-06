@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { act } from "react";
 
 const API_URL = "http://localhost:3000/events";
 export function authHeader() {
@@ -62,7 +61,7 @@ export const deleteEvent = createAsyncThunk("events/deleteEvent", async (eventId
 export const updateEvent = createAsyncThunk(
   "events/updateEvent", async (updatedEvent, { rejectWithValue }) => {
   try {
-    console.log("here",updatedEvent.get("title"))
+  //   console.log("here",updatedEvent.get("title"))
     const response = await axios.put(`${API_URL}/update/${updatedEvent.get("_id")}`, updatedEvent,{
       headers:{ 
         "authorization": authHeader(),
@@ -90,7 +89,7 @@ const eventSlice = createSlice({
   name: "events",
   initialState:{
     events: [],
-    ucEvents: [],
+    pendingEvents: [],
     selectedEvent: null,
     loading: false,
     error: null,
@@ -106,7 +105,7 @@ const eventSlice = createSlice({
       .addCase(fetchEvents.fulfilled, (state, action) => {
         state.loading = false;
         state.events = action.payload.data.events;
-        state.ucEvents = action.payload.data.ucEvents;
+        state.pendingEvents = action.payload.data.pendingEvents;
       })
       .addCase(fetchEvents.rejected, (state, action) => {
         state.loading = false;

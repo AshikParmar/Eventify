@@ -7,14 +7,14 @@ import { fetchEvents } from '../../redux/slices/eventSlice';
 
 
 const Home = () => {
-  const { ucEvents , loading, error } = useSelector((state)=> state.event);
+  const { pendingEvents , loading, error } = useSelector((state)=> state.event);
   const dispatch = useDispatch();
 
     useEffect(() => {
       dispatch(fetchEvents());
     }, [])
     
-    const events = ucEvents.slice(0,4);
+    const events = pendingEvents.slice(0,4);
 
   return (
     <div>

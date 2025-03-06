@@ -1,5 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
+import Loading from "../../ui/Loading";
 
 const TotalEvents = () => {
   
@@ -7,7 +8,7 @@ const TotalEvents = () => {
  
     // console.log(events)
 
-    if (loading) return <p>Loading events...</p>;
+    if (loading) return <Loading title="Loading events..."/>
     if (error) return <p className="text-red-500">Error: {error}</p>;
 
   return (

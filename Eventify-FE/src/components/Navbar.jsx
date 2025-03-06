@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { Menu, MenuItem } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { logout } from '../redux/slices/userSlice';
-import { useGlobalUI } from './Globel/GlobalUIContext';
+import { useGlobalUI } from './Global/GlobalUIContext';
 
 
 
@@ -84,7 +84,7 @@ const Navbar = () => {
         open={Boolean(menuAnchor)}
         onClose={handleMenuClose}
       >
-        <MenuItem onClick={handleProfile}>Profile</MenuItem>
+       {user.role === "User" && <MenuItem onClick={handleProfile}>Profile</MenuItem>}
 
         <MenuItem onClick={handleLogout}>
           {/* <LogoutIcon /> */}

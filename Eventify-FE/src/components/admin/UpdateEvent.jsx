@@ -3,10 +3,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { updateEvent } from "../../redux/slices/eventSlice";
 import { useNavigate, useParams } from "react-router-dom";
 import { X } from "lucide-react";
-import { useGlobalUI } from "../Globel/GlobalUIContext";
+import { useGlobalUI } from "../Global/GlobalUIContext";
+import Loading from "../ui/Loading";
 
 const UpdateEvent = () => {
-   
+
     const { showSnackbar } = useGlobalUI();
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -86,7 +87,7 @@ const UpdateEvent = () => {
     };
 
     const handleSubmit = async (e) => {
-        
+
         e.preventDefault();
 
         const updatedEvent = new FormData();
@@ -99,9 +100,9 @@ const UpdateEvent = () => {
             const response = await dispatch(updateEvent(updatedEvent));
             console.log(response);
 
-          
+
             showSnackbar("Event updated successfully!", "success");
-            navigate(-1);
+            navigate("/admin/manage-events");
         } catch (error) {
             console.error("Error updating event:", error);
             showSnackbar("Failed to update event!", "error");
@@ -109,12 +110,20 @@ const UpdateEvent = () => {
     };
 
 
-
-    // if (loading) return <p>Loading events...</p>;
-    // if (error) return <p className="text-red-500">Error: {error}</p>;
+    if (loading) {
+        return (
+          <div className="h-full flex items-center justify-center">
+           <Loading title="Updating..." />
+          </div>
+        );
+      } 
 
     return (
-        <div className="m-10 p-6 bg-white shadow-lg rounded-lg">
+        <div className="m-10 p-6 bg-white shadow-lg rounded-lg ">
+             {error && (
+                <p className="text-red-500">Error: {error}</p>
+            )}
+            
             <h2 className="text-2xl font-bold mb-6 text-center">Update Event</h2>
             <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
                 {/* Event Title */}
@@ -306,19 +315,6 @@ const UpdateEvent = () => {
                 </div>
             </form>
 
-            {loading && (
-
-                <div className="fixed flex items-center justify-center bg-white bg-opacity-10">
-                    <div className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center">
-                        <p className="text-lg font-semibold">Uploading...</p>
-                        <div className="w-10 h-10 border-4 border-blue-500 border-dotted rounded-full animate-spin mt-3"></div>
-                    </div>
-                </div>
-            )}
-
-            {error && (
-                <p className="text-red-500">Error: {error}</p>
-            )}
         </div>
     );
 };
