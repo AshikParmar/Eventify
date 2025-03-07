@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-
-const API_URL = "http://localhost:3000/user";
+const API_URL = `${import.meta.env.VITE_BASE_URL}/user`;
 
 
 // Fetch All Events

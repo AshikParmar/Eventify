@@ -2,7 +2,7 @@
 import axios from "axios";
 import { authHeader } from "../slices/eventSlice";
 
-const API_URL = "http://localhost:3000/events";
+const API_URL = `${import.meta.env.VITE_BASE_URL}/events`;
 
 export const joinEvents = async ({ eventId, userId }) => {
     try {

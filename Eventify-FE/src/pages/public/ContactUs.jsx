@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useGlobalUI } from '../../components/Global/GlobalUIContext';
 import { useSelector } from 'react-redux';
-import axios from 'axios';
+import { sendEmail } from '../../redux/services/emailSend';
 
 const ContactUs = () => {
     const { showSnackbar, showDialog } = useGlobalUI();
@@ -30,7 +30,8 @@ const ContactUs = () => {
                 setLoading(true);
 
                 try {
-                    const response = await axios.post("http://localhost:3000/email/send-email", formData);
+                    const response = await sendEmail(formData); 
+
                     showSnackbar(response.data.message, "success");
 
                     setFormData({ name: user?.username || "", email: user?.email || "", message: "" });
