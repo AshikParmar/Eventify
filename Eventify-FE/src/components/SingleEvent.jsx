@@ -52,7 +52,7 @@ const SingleEvent = () => {
                     <img
                         src={event.image}
                         alt={event.title}
-                        className="md:w-[50%]  lg:object-cover rounded-md"
+                        className="w-full md:w-[50%] aspect-[5/3] object-cover rounded-md"
                     />
 
                     <div className=" md:ml-10">
