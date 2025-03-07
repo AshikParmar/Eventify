@@ -1,4 +1,4 @@
-
+import axios from "axios";
 const API_URL = `${import.meta.env.VITE_BASE_URL}/email`;
 
 export const sendEmail = async (formData) => {
