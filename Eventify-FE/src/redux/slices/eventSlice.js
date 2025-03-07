@@ -1,7 +1,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const API_URL = "http://localhost:3000/events";
+const API_URL = `${import.meta.env.VITE_BASE_URL}/events`;
+
 export function authHeader() {
   const token = localStorage.getItem("token");
   return  token || "" ;

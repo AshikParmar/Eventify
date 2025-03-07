@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { authHeader } from "./eventSlice";
 
-const API_URL = "http://localhost:3000/user";
+const API_URL = `${import.meta.env.VITE_BASE_URL}/user`;
 
 const storedUser = JSON.parse(localStorage.getItem("user")) || null;
 const token = localStorage.getItem("token") || null;
