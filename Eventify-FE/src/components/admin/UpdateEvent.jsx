@@ -283,6 +283,9 @@ const UpdateEvent = () => {
                         onChange={handleChange}
                         accept="image/*"
                     />
+                    <p className="text-xs text-gray-500 mt-1">
+                        Recommended size: **1000x600px** (5:3 aspect ratio). Supports JPG, PNG, and GIF.
+                    </p>
                 </div>
                 {imagePreview && (
                     <div className="relative w-80">

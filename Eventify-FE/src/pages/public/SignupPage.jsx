@@ -3,9 +3,11 @@ import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { signupUser } from "../../redux/slices/userSlice";
 import { useGlobalUI } from "../../components/Global/GlobalUIContext";
+import Loading from "../../components/ui/Loading";
 
 
 const SignupPage = () => {
+  const [ loading, setLoading ] = useState(false);
   const { showSnackbar } = useGlobalUI();
   const [input, setInput] = useState({
     username: "",
@@ -29,6 +31,7 @@ const SignupPage = () => {
     }
 
       try{  
+        setLoading(true);
       const res = await dispatch(signupUser(input));
 
       if (res.payload.success) {
@@ -49,8 +52,16 @@ const SignupPage = () => {
     catch(e) {
       console.error("internal error ", e.message);
     }
+    finally{
+      setLoading(false);
+    }
   };
 
+  if(loading){
+    return <div className="h-screen flex items-center justify-center">
+      <Loading title="signing..."/>
+    </div>
+  }
 
   return (
     <div className="flex items-center min-h-screen p-4 bg-gray-100 justify-center">
