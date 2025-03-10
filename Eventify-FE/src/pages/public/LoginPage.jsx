@@ -3,9 +3,11 @@ import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { loginUser } from '../../redux/slices/userSlice';
 import { useGlobalUI } from "../../components/Global/GlobalUIContext";
+import Loading from "../../components/ui/Loading";
   
 
 const LoginPage = () => {
+  const [loading, setLoading] = useState(false);
   const { showSnackbar } = useGlobalUI();
   const [showPassword, setShowPassword] = useState(false);
   const [input, setInput] = useState({
@@ -22,12 +24,14 @@ const LoginPage = () => {
   
   const handleSubmit = async (e) => {
     e.preventDefault();
+  
     if (!input.email || !input.password) {
       showSnackbar("All fields are required!", "error");
       return;
     }
     
     try{ 
+      setLoading(true);
       const res = await dispatch(loginUser(input));
       // console.log('res: ', res);
 
@@ -61,9 +65,18 @@ const LoginPage = () => {
     catch(e) {
       console.error("internal error ", e.message);
     }
+    finally{
+      setLoading(false);
+    }
 
   };
 
+  
+if(loading){
+  return <div className="h-screen flex items-center justify-center">
+    <Loading title="Loging..."/>
+  </div>
+}
 
   return (
     <div className="flex items-center min-h-screen p-4 bg-gray-100 justify-center">

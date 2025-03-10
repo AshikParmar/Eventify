@@ -30,7 +30,7 @@ const ResetPassword = () => {
         showSnackbar(result.message, "error");
         setError(result.message);
       }
-    } catch (err) {
+    } catch (e) {
       console.log("Error", e.message);
       showSnackbar(e.message, "error");
     } finally {
