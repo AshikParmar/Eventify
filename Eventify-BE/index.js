@@ -1,6 +1,5 @@
 import express from "express";
-import dotenv from "dotenv";
-dotenv.config();
+import "dotenv/config";
 import cors from "cors";
 import userRoute from "./routers/user.js";
 import connectDB from "./db/database.js";
@@ -11,7 +10,7 @@ import eventStatusUpdate from "./services/cronJobs.js";
 
 const app = express();
 app.use(express.json());
-app.use("/uploads", express.static("uploads")); // Serve uploaded images    
+    
 app.use(cors({
     origin: "*", 
     methods: ["GET", "POST", "PUT", "DELETE"], 

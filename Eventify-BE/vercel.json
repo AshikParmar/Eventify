@@ -1,27 +1,34 @@
 {
-    "version": 2,
-    "builds": [
-       {
-         "src": "index.js",
-         "use": "@vercel/node"
-       }
-    ],
-    "routes": [
-      {
-        "src": "/(.*)",
-        "dest": "index.js",
-        "methods": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-        "headers": {
+  "version": 2,
+  "builds": [
+    {
+      "src": "index.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "index.js",
+      "methods": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE",
+        "PATCH",
+        "OPTIONS"
+      ],
+      "headers": {
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Methods": "*",
         "Access-Control-Allow-Headers": "*"
       }
-      }
-    ]
-   }
-
-
-
-
-
-
+    }
+  ],
+  "crons": [
+    {
+      "path": "/api/cron-job",
+      "schedule": "*/1 * * * *"
+    }
+  ]
+}
