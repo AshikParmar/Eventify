@@ -87,7 +87,7 @@ export const joinEvent = createAsyncThunk("events/joinEvent", async ({ eventId, 
 
 // Create Slice
 const eventSlice = createSlice({
-  name: "events",
+  name: "event",
   initialState:{
     events: [],
     pendingEvents: [],

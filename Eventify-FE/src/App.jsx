@@ -66,8 +66,8 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/events" element={<Events />} />
                 <Route path="/events/:id" element={<SingleEvent />} />
-                {/* <Route path="/events/:id/ordersummary" element={<OrderSummary />} />
-                <Route path="/events/:id/ordersummary/paymentsummary" element={<PaymentSummary />} /> */}
+                <Route path="/events/:id/ordersummary" element={<OrderSummary />} />
+                <Route path="/events/:id/ordersummary/paymentsummary" element={<PaymentSummary />} />
                 <Route path="/user/*" element={<UserProfile />} />
               </>
             )}

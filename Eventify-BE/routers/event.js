@@ -12,6 +12,6 @@ router.get("/fetchevents", getEvents);
 router.get("/fetchevents/:id", getEventById);
 router.put("/update/:id",auth(["Admin"]),  upload.single("image") ,updateEvent);
 router.delete("/delete/:id", auth(["Admin"]),deleteEvent);
-router.post("/joinevent",auth(["User"]),joinEvent)
+router.post("/join-event",auth(["User"]),joinEvent)
 
 export default router;

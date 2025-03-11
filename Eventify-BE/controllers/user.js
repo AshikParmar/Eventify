@@ -103,10 +103,11 @@ export const getUsers = async (req, res) => {
 export const changePassword = async (req, res) => {
   try {
     const { oldPassword, newPassword } = req.body;
-    const userId = req.userId; // Extracted from auth middleware
+    const user = req.user; // Extracted from auth middleware
 
     // Find the user by ID
-    const user = await User.findById(userId);
+    // const user = await User.findById(userId);
+    
     if (!user) {
       return res.status(404).json({ message: "User not found", success: false });
     }
@@ -136,10 +137,11 @@ export const changePassword = async (req, res) => {
 export const updateUser = async (req, res) => {
   try {
     const { username, email } = req.body;
-    const userId = req.userId; // Get user ID from JWT (authMiddleware)
+    const user = req.user;
+    // const userId = req.userId; // Get user ID from JWT (authMiddleware)
 
-    // Check if user exists
-    const user = await User.findById(userId);
+    // // Check if user exists
+    // const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ message: "User not found", success: false });
     }
