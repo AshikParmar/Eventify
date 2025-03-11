@@ -9,20 +9,15 @@ import Loading from "../ui/Loading";
 const CreateEvent = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const [isSingleDay, setIsSingleDay] = useState(false)
 
     const { showSnackbar } = useGlobalUI();
     const dispatch = useDispatch();
     const navigate = useNavigate();
+
     const eventTypes = [
-        "Technical",
-        "Cultural",
-        "Sports",
-        "Hackathon",
-        "Workshop",
-        "Seminar",
-        "Quiz Competition",
-        "Coding Competition",
-        "Other"
+        "Technical", "Cultural", "Sports", "Hackathon", "Workshop",
+        "Seminar", "Quiz Competition", "Coding Competition", "Other"
     ];
 
     const [imagePreview, setImagePreview] = useState(null);
@@ -34,78 +29,83 @@ const CreateEvent = () => {
         type: "",
         venue: "",
         date: "",
+        endDate: "",
         startTime: "",
         endTime: "",
-        duration: "",
         price: "",
         totalSlots: "",
-        availableSlots: "",
         description: "",
         image: null,
     });
 
     const handleChange = (e) => {
-        if (e.target.name === "image") {
-            const file = e.target.files[0];
+        const { name, value } = e.target;
 
+        if (name === "image") {
+            const file = e.target.files[0];
             if (file) {
                 setFormData({ ...formData, image: file });
-
                 const reader = new FileReader();
-                reader.onloadend = () => {
-                    setImagePreview(reader.result);
-                };
+                reader.onloadend = () => setImagePreview(reader.result);
                 reader.readAsDataURL(file);
             }
+        } else if (name === "date") {
+            setFormData({
+                ...formData,
+                date: value,
+                endDate: isSingleDay ? value : formData.endDate
+            });
+        } else if (name === "endDate") {
+            setFormData({ ...formData, endDate: value });
         } else {
-            setFormData({ ...formData, [e.target.name]: e.target.value });
+            setFormData({ ...formData, [name]: value });
         }
+    };
 
+    const toggleSingleDayChange = () => {
+        setIsSingleDay(!isSingleDay);
+        setFormData({
+            ...formData,
+            endDate: isSingleDay ? "" : formData.date 
+        });
     };
 
     const handleRemoveImage = () => {
         setImagePreview(null);
         setFormData({ ...formData, image: null });
 
-
         if (fileInputRef.current) {
             fileInputRef.current.value = "";
         }
     };
-    const handleSubmit = async (e) => {
 
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true);
+        setError("");
 
         try {
-
-            setLoading(true);
-            setError("");
-
-            const data = new FormData();
-            Object.keys(formData).forEach((key) => {
-                data.append(key, formData[key]);
+            const formDataObject = new FormData();
+            Object.entries(formData).forEach(([key, value]) => {
+                if (value) formDataObject.append(key, value);
             });
 
-            const response = await dispatch(addEvent(data));
-            console.log(response);
+            const response = await dispatch(addEvent(formDataObject));
 
             if (response.payload.success) {
                 showSnackbar("Event created successfully!", "success");
                 navigate(-1);
+            } else {
+                showSnackbar(response?.payload?.message || "Event creation failed.", "error");
+                setError(response?.payload?.message);
             }
-            else if (!response.payload.success) {
-                showSnackbar(response?.payload?.messege, "error");
-                setError(response?.payload?.messege);
-            }
-        }
-        catch (e) {
-            console.log(e.messege);
-            setError(e.messege);
-        }
-        finally {
+        } catch (e) {
+            setError(e.message || "An error occurred.");
+        } finally {
             setLoading(false);
         }
     };
+
 
     if (loading) {
         return (
@@ -171,8 +171,8 @@ const CreateEvent = () => {
                     />
                 </div>
 
-                {/* Date & Duration */}
-                <div className="flex gap-4 col-span-1">
+                {/* Date & end Date */}
+                <div className=" flex gap-4">
                     <div className="flex flex-col">
                         <label className="text-gray-700 font-medium">Date</label>
                         <input
@@ -184,22 +184,35 @@ const CreateEvent = () => {
                             required
                         />
                     </div>
-                    <div className="flex flex-col">
 
-                        <label className="text-gray-700 font-medium">Duration <span
-                            className="text-xs italic text-gray-500 cursor-help"
-                            title="You can leave this empty."
-                        >
-                            (Optional)
-                        </span></label>
-                        <input
-                            type="text"
-                            name="duration"
-                            placeholder="Duration (e.g., 2 Days)"
-                            className="bg-gray-300 p-2 rounded-sm"
-                            onChange={handleChange}
-                        />
-                    </div>
+                    {formData.date &&
+                        <div className="flex gap-4">
+                            <label className="text-gray-700 font-medium flex items-center">
+                                <input
+                                    type="checkbox"
+                                    className="mr-2"
+                                    checked={isSingleDay}
+                                    onChange={toggleSingleDayChange}
+                                />
+                                Single-Day Event
+                            </label>
+
+                            {!isSingleDay && (
+                                <div className="flex flex-col">
+                                    <label className="text-gray-700 font-medium">End Date</label>
+                                    <input
+                                        label="End Date"
+                                        type="date"
+                                        name="endDate"
+                                        min={formData.date}
+                                        className="bg-gray-300 p-2 rounded-sm"
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+                            )}
+                        </div>
+                    }
                 </div>
 
                 {/* Start Time & End Time */}
@@ -227,30 +240,17 @@ const CreateEvent = () => {
                 </div>
 
                 {/* Total Slots & Available Slots */}
-                <div className="flex gap-4 col-span-2 ">
-                    <div className="flex flex-col">
-                        <label className="text-gray-700 font-medium">Total Slots</label>
-                        <input
-                            type="number"
-                            name="totalSlots"
-                            placeholder="Enter total slots"
-                            className="bg-gray-300 p-2 rounded-sm"
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
-                    <div className="flex flex-col">
+                <div className="flex flex-col col-span-2 ">
 
-                        <label className="text-gray-700 font-medium">Available Slots</label>
-                        <input
-                            type="number"
-                            name="availableSlots"
-                            placeholder="Enter available slots"
-                            className="bg-gray-300 p-2 rounded-sm"
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
+                    <label className="text-gray-700 font-medium">Total Slots</label>
+                    <input
+                        type="number"
+                        name="totalSlots"
+                        placeholder="Enter total slots"
+                        className="bg-gray-300 p-2 w-50 rounded-sm"
+                        onChange={handleChange}
+                        required
+                    />
                 </div>
 
 

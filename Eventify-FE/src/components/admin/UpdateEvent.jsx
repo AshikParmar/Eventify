@@ -11,8 +11,10 @@ const UpdateEvent = () => {
     const { showSnackbar } = useGlobalUI();
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { id } = useParams(); // Get event ID from URL params
+    const { id } = useParams(); 
+    
     const [imagePreview, setImagePreview] = useState(null);
+    const [isSingleDay, setIsSingleDay] = useState(false)   
     const fileInputRef = useRef(null);
 
     const eventTypes = [
@@ -28,10 +30,16 @@ const UpdateEvent = () => {
     ];
 
     const { events, loading, error } = useSelector((state) => state.event);
-    let existingEvent = {};
+
     useEffect(() => {
-        existingEvent = events.find((event) => event._id === id);
-    }, [])
+        const existingEvent = events.find((event) => event._id === id);
+        
+        if (existingEvent) {
+            setFormData(existingEvent);
+            setImagePreview(existingEvent.image);
+            setIsSingleDay(existingEvent.date === existingEvent.endDate);
+        }
+    }, [id, events]);
 
 
     const [formData, setFormData] = useState({
@@ -39,9 +47,9 @@ const UpdateEvent = () => {
         type: "",
         venue: "",
         date: "",
+        endDate: "",
         startTime: "",
         endTime: "",
-        duration: "",
         price: "",
         totalSlots: "",
         availableSlots: "",
@@ -49,31 +57,38 @@ const UpdateEvent = () => {
         image: null,
     });
 
-    useEffect(() => {
-        existingEvent = events.find((event) => event._id === id);
-        if (existingEvent) {
-            setFormData(existingEvent);
-            setImagePreview(existingEvent.image);
-        }
-    }, []);
 
     const handleChange = (e) => {
-        if (e.target.name === "image") {
-            const file = e.target.files[0];
+        const { name, value } = e.target;
 
+        if (name === "image") {
+            const file = e.target.files[0];
             if (file) {
                 setFormData({ ...formData, image: file });
-
                 const reader = new FileReader();
-                reader.onloadend = () => {
-                    setImagePreview(reader.result); // Set preview URL correctly
-                };
-                reader.readAsDataURL(file); // ✅ Use "file" instead of formData.image
+                reader.onloadend = () => setImagePreview(reader.result);
+                reader.readAsDataURL(file);
             }
+        } else if (name === "date") {
+            setFormData({
+                ...formData,
+                date: value,
+                endDate: isSingleDay && value  // ✅ Auto-set endDate if single-day
+            });
+        }else if (name === "endDate") {
+            setFormData({ ...formData, endDate: value });
         } else {
-            setFormData({ ...formData, [e.target.name]: e.target.value });
+            setFormData({ ...formData, [name]: value });
         }
+        console.log(formData)
+    };
 
+    const toggleSingleDayChange = () => {
+        setIsSingleDay(!isSingleDay);
+        setFormData({
+            ...formData,
+            endDate: isSingleDay ? "" : formData.date 
+        });
     };
 
     const handleRemoveImage = () => {
@@ -112,18 +127,18 @@ const UpdateEvent = () => {
 
     if (loading) {
         return (
-          <div className="h-full flex items-center justify-center">
-           <Loading title="Updating..." />
-          </div>
+            <div className="h-full flex items-center justify-center">
+                <Loading title="Updating..." />
+            </div>
         );
-      } 
+    }
 
     return (
         <div className="m-10 p-6 bg-white shadow-lg rounded-lg ">
-             {error && (
+            {error && (
                 <p className="text-red-500">Error: {error}</p>
             )}
-            
+
             <h2 className="text-2xl font-bold mb-6 text-center">Update Event</h2>
             <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
                 {/* Event Title */}
@@ -169,30 +184,50 @@ const UpdateEvent = () => {
                     />
                 </div>
 
-                {/* Date & Duration */}
-                <div className="flex gap-4 col-span-1">
+                {/* Date & end Date */}
+                <div className=" flex gap-4">
                     <div className="flex flex-col">
                         <label className="text-gray-700 font-medium">Date</label>
                         <input
                             type="date"
                             name="date"
                             value={formData.date}
+                            min={new Date().toISOString().split("T")[0]}
                             className="bg-gray-300 p-2 rounded-sm"
                             onChange={handleChange}
                             required
                         />
                     </div>
-                    <div className="flex flex-col">
-                        <label className="text-gray-700 font-medium">Duration</label>
-                        <input
-                            type="text"
-                            name="duration"
-                            value={formData.duration}
-                            className="bg-gray-300 p-2 rounded-sm"
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
+
+                    {formData.date &&
+                        <div className="flex gap-4">
+                            <label className="text-gray-700 font-medium flex items-center">
+                                <input
+                                    type="checkbox"
+                                    className="mr-2"
+                                    checked={isSingleDay}
+                                    onChange={toggleSingleDayChange}
+                                />
+                                Single-Day Event
+                            </label>
+
+                            {!isSingleDay && (
+                                <div className="flex flex-col">
+                                    <label className="text-gray-700 font-medium">End Date</label>
+                                    <input
+                                        label="End Date"
+                                        type="date"
+                                        name="endDate"
+                                        value={formData.endDate}
+                                        min={formData.date}
+                                        className="bg-gray-300 p-2 rounded-sm"
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+                            )}
+                        </div>
+                    }
                 </div>
 
                 {/* Start Time & End Time */}

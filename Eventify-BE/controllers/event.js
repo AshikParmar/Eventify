@@ -27,9 +27,14 @@ export const createEvent = async (req, res) => {
 
         const eventPrice = price || "Free";
 
-        const event = new Event({ ...req.body, price:eventPrice , organizer: userId,image: imageUrl });
+        const event = new Event({ ...req.body, 
+            availableSlots: totalSlots,
+            price:eventPrice , 
+            organizer: userId, 
+            image: imageUrl 
+        });
         await event.save();
-        res.status(201).json({ success: true, data: event });
+        res.status(201).json({ success: true,  message: "Event created successfully", data: event });
     } catch (error) {
         res.status(400).json({ success: false, message: error.message });
     }
@@ -87,10 +92,10 @@ export const updateEvent = async (req, res) => {
         }
 
         // Extract fields to update
-        const { title, type, venue, date, duration, startTime, endTime, totalSlots, availableSlots , price , description } = req.body;
+        const { title, type, venue, date, endDate, startTime, endTime, totalSlots, availableSlots , price , description } = req.body;
         const eventPrice = price || "Free";
 
-        let updatedFields = { title, type, venue, date, duration, startTime, endTime, totalSlots,availableSlots , price:eventPrice, description };
+        let updatedFields = { title, type, venue, date, endDate, startTime, endTime, totalSlots,availableSlots , price:eventPrice, description };
 
         // Handle Image Upload if a new image is provided
         if (req.file) {

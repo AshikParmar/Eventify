@@ -15,14 +15,14 @@ const eventSchema = new mongoose.Schema({
     date: {
         type: String,
     },
+    endDate: { 
+        type: String, 
+    },
     startTime: {
         type: String,
     },
     endTime:{
         type:String,
-    },
-    duration: {
-        type: String,
     },
     organizer: {
         type: mongoose.Schema.ObjectId,
@@ -47,7 +47,7 @@ const eventSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum:["Pending","Completed","Rejected"],
+        enum:["Pending","Running","Completed","Rejected"],
         default: "Pending",
     },
     image: {

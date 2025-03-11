@@ -12,6 +12,7 @@ const SingleEvent = () => {
 
     const event = events.find(event => event._id === id);
 
+    const isSingleDay = event?.endDate ? event.date === event.endDate : true;
 
     return (
         <div className="p-8 bg-gray-50 min-h-screen">
@@ -36,7 +37,12 @@ const SingleEvent = () => {
                     <div className=" md:ml-10">
                         <h2 className="text-4xl font-semibold mb-2">{event.title} - <span className=" text-2xl mb-2">{event.type}</span></h2>
                         <p className="text-gray-700 mb-2 ">📅 Date: {event.date}</p>
-                        <p className="text-gray-700 mb-2 ml-8">Time: {event.startTime} to {event.endTime}</p>
+                        {isSingleDay ?
+                           ( <p className="text-gray-700 mb-2 ">One Day Event</p>)
+                            :
+                           ( <p className="text-gray-700 mb-2 ">End Date: {event.endDate}</p>)
+                        }
+                        <p className="text-gray-700 mb-2">Time: {event.startTime} to {event.endTime}</p>
 
                         <p className="text-gray-700 mb-2">📍 venue: {event.venue}</p>
                         <p className="text-gray-700 mb-2">💲 Price: {event.price}</p>
