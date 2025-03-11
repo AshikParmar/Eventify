@@ -7,22 +7,21 @@ export default async function handler(req, res) {
 
   try {
     const now = new Date();
-    console.log('now: ', now);
-    const todayISO = now.toISOString().split("T")[0]; 
-    console.log('todayISO: ', todayISO);
-    const currentTime = now.toTimeString().slice(0, 5); 
+    const localTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" })); // Change to your time zone
+    const todayISO = localTime.toISOString().split("T")[0];
+    const currentTime = localTime.toTimeString().slice(0, 5); 
 
     console.log(`🕒 Running Event Update at ${currentTime} on ${todayISO}`);
 
-    //Update events to "Running" when start time is reached
-    // const runningResult = await Event.updateMany(
-    //   { date: todayISO, startTime: { $lte: currentTime }, status: "Pending" },
-    //   { $set: { status: "Running" } }
-    // );
+    // Update events to "Running" when start time is reached
+    const runningResult = await Event.updateMany(
+      { date: todayISO, startTime: { $lte: currentTime }, status: "Pending" },
+      { $set: { status: "Running" } }
+    );
 
-    //Update events to "Completed" when end time is reached
+    // Update events to "Completed" when end time is reached
     const completedResult = await Event.updateMany(
-      { endDate: todayISO, endTime: { $lte: currentTime }, status: "Running" },
+      { date: todayISO, endTime: { $lte: currentTime }, status: "Running" },
       { $set: { status: "Completed" } }
     );
 
