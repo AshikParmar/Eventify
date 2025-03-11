@@ -2,11 +2,20 @@
   "version": 2,
   "builds": [
     {
+      "src": "api/cron-job.js",
+      "use": "@vercel/node"
+    },
+    {
       "src": "index.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
+    {
+      "src": "/api/cron-job",
+      "dest": "api/cron-job.js",
+      "methods": ["GET"]
+    },
     {
       "src": "/(.*)",
       "dest": "index.js",
