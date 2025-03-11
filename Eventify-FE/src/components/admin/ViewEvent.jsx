@@ -24,7 +24,7 @@ const ViewEvent = () => {
         try {
           await dispatch(deleteEvent(id)).unwrap();
           showSnackbar("Event deleted successfully!", "success");
-          navigate(-1);
+          navigate("/admin/manage-events");
         } catch (error) {
           showSnackbar(
             error.message || "Failed to delete Event.",
