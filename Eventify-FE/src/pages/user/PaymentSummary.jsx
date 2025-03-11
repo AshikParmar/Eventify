@@ -1,42 +1,53 @@
 import React, { useEffect, useState } from "react";
 import { IoMdArrowBack } from "react-icons/io";
 import { useSelector } from "react-redux";
-import { Link, useNavigate, useParams } from "react-router-dom";
-// import Qrcode from "qrcode";
-import axios from "axios";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useGlobalUI } from '../../components/Global/GlobalUIContext';
+import { joinEvent } from "../../redux/services/eventJoin";
 
 const PaymentSummary = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { events, loading, error } = useSelector((state) => state.event);
-  const { user } = useSelector((state) => state.user); // Assuming user is stored in Redux
+  const location = useLocation();
+  const { showSnackbar, showDialog } = useGlobalUI();
+
+  const { events, loading } = useSelector((state) => state.event);
+  const { user } = useSelector((state) => state.user);
 
   const [event, setEvent] = useState(null);
-  const [ticketDetails, setTicketDetails] = useState(null);
+  const { ticketCount, totalPrice } = location.state || { ticketCount: 1, totalPrice: 0 };
+  const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
-    if (!id) return;
-    const selectedEvent = events.find((event) => event._id === id);
-    setEvent(selectedEvent);
-  }, [id]);
-
-  useEffect(() => {
-    if (event && user) {
-      setTicketDetails({
-        userid: user._id,
-        eventid: event._id,
-        ticketDetails: {
-          name: user.username,
-          email: user.email,
-          eventName: event.title,
-          eventDate: event.date,
-          eventStartTime: event.startTime,
-          ticketPrice: event.price,
-          qr: "",
-        },
-      });
+    if (id) {
+      const selectedEvent = events.find((e) => e._id === id);
+      setEvent(selectedEvent);
     }
-  }, [event, user]);
+  }, [id, events]);
+
+  const handlePayment = async (e) => {
+    e.preventDefault();
+    if (!event || !user) {
+      alert("Event or user details are missing.");
+      return;
+    }
+
+    setIsProcessing(true);
+
+    try {
+      const response = await joinEvent(user._id, event._id, ticketCount, totalPrice);
+      if (!response.success) {
+        showSnackbar(response?.message, "error");
+      }
+
+      showSnackbar(response?.message, "success");
+      // navigate("/my-tickets"); 
+    } catch (error) {
+      showSnackbar(error.message || "Failed to Join Event.", "error");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -54,49 +65,12 @@ const PaymentSummary = () => {
     );
   }
 
-  //! Helper function to generate QR code
-  async function generateQRCode(name, eventName) {
-    try {
-      return await Qrcode.toDataURL(`Event Name: ${eventName} \n Name: ${name}`);
-    } catch (error) {
-      console.error("Error generating QR code:", error);
-      return null;
-    }
-  }
-
-  //! Create Ticket Function
-  const createTicket = async (e) => {
-    e.preventDefault();
-    try {
-      const qrCode = await generateQRCode(
-        ticketDetails.ticketDetails.name,
-        ticketDetails.ticketDetails.eventname
-      );
-
-      const updatedTicketDetails = {
-        ...ticketDetails,
-        ticketDetails: {
-          ...ticketDetails.ticketDetails,
-          qr: qrCode,
-        },
-      };
-
-      await axios.post(`/tickets`, updatedTicketDetails);
-      alert("Ticket Created");
-      setRedirect(true);
-    } catch (error) {
-      console.error("Error creating ticket:", error);
-    }
-  };
-
-
-
   return (
     <div className="min-h-screen p-6 bg-gray-50">
       {/* Back Button */}
       <button
         onClick={() => navigate(-1)}
-        className="inline-flex gap-2 items-center px-4 py-2 bg-gray-200 text-blue-700 font-bold rounded-md hover:bg-gray-300 transition"
+        className="inline-flex gap-2 items-center mb-4 px-4 py-2 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 transition"
       >
         <IoMdArrowBack className="w-5 h-5" /> Back
       </button>
@@ -109,75 +83,29 @@ const PaymentSummary = () => {
             <input
               type="text"
               name="name"
-              value={ticketDetails?.ticketDetails.name || ""}
+              value={user?.username || ""}
               disabled
               className="w-full p-3 border rounded-md bg-gray-100"
             />
             <input
               type="email"
               name="email"
-              value={ticketDetails?.ticketDetails.email || ""}
+              value={user?.email || ""}
               disabled
               className="w-full p-3 border rounded-md bg-gray-100"
             />
           </div>
-
-          {/* <h2 className="text-xl font-bold mt-8">Payment Option</h2>
-          <div className="mt-4">
-            <button
-              type="button"
-              className="px-8 py-3 text-black bg-blue-100 border rounded-md cursor-not-allowed"
-              disabled
-            >
-              Credit / Debit Card
-            </button>
-          </div>
-
-          <div className="mt-6 space-y-4">
-            <input
-              type="text"
-              name="nameOnCard"
-              placeholder="Name on Card"
-              value="A.B.S.L. Perera"
-              disabled
-              className="w-full p-3 border rounded-md bg-gray-100"
-            />
-            <input
-              type="text"
-              name="cardNumber"
-              placeholder="Card Number"
-              value="5648 3212 7802"
-              disabled
-              className="w-full p-3 border rounded-md bg-gray-100"
-            />
-            <div className="flex space-x-4">
-              <input
-                type="text"
-                name="expiryDate"
-                placeholder="Expiry Date (MM/YY)"
-                value="12/25"
-                disabled
-                className="w-1/2 p-3 border rounded-md bg-gray-100"
-              />
-              <input
-                type="text"
-                name="cvv"
-                placeholder="CVV"
-                value="532"
-                disabled
-                className="w-1/4 p-3 border rounded-md bg-gray-100"
-              />
-            </div>
-          </div> */}
 
           {/* Make Payment Button */}
           <div className="mt-8">
-            <p className="text-lg font-semibold pb-2">Total: INR. {event.price}</p>
+            <p className="text-lg font-semibold pb-2">Total: INR. {totalPrice}</p>
             <button
-              onClick={createTicket}
-              className="w-full py-3 text-white font-bold bg-blue-700 hover:bg-blue-800 rounded-md transition"
+              onClick={handlePayment}
+              className={`w-full py-3 text-white font-bold rounded-md transition ${isProcessing ? "bg-gray-500 cursor-not-allowed" : "bg-blue-700 hover:bg-blue-800"
+                }`}
+              disabled={isProcessing}
             >
-              Make Payment
+              {isProcessing ? "Processing..." : totalPrice === "Free" ? "Join Event" : "Make Payment"}
             </button>
           </div>
         </div>
@@ -188,16 +116,15 @@ const PaymentSummary = () => {
           <div className="text-sm">
             <p className="font-semibold">{event.title}</p>
             <p className="text-xs">{event.date}, {event.startTime}</p>
-            <p className="text-xs pb-2">1 Ticket</p>
+            <p className="text-xs pb-2">{ticketCount} Ticket</p>
             <hr className="my-4 border-gray-300" />
             <p className="font-bold">INR {event.price}</p>
-            <p className="font-bold">Sub total: {event.price}</p>
+            <p className="font-bold">Sub total: {totalPrice}</p>
           </div>
         </div>
       </div>
     </div>
   );
-}
+};
 
-
-export default PaymentSummary
+export default PaymentSummary;

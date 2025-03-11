@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { IoMdArrowBack } from "react-icons/io";
 import { useSelector } from "react-redux";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const OrderSummary = () => {
   const { events, loading, error } = useSelector((state) => state.event);
@@ -10,6 +10,7 @@ const OrderSummary = () => {
   const navigate = useNavigate();
 
   const [event, setEvent] = useState(null);
+  const [ticketCount, setTicketCount] = useState(1);
   const [isCheckboxChecked, setIsCheckboxChecked] = useState(false);
 
   useEffect(() => {
@@ -18,8 +19,18 @@ const OrderSummary = () => {
     setEvent(event);
   }, [id]);
 
+
+  const totalPrice = event?.price !== "Free" ? event?.price * ticketCount : "Free" ;
+
   const handleCheckboxChange = (e) => {
     setIsCheckboxChecked(e.target.checked);
+  };
+
+
+  const handleProceed = () => {
+    navigate(`/events/${event._id}/ordersummary/paymentsummary`, {
+      state: { ticketCount, totalPrice }
+    });
   };
 
   if (loading) {
@@ -41,11 +52,11 @@ const OrderSummary = () => {
   return (
     <div className="min-h-screen p-6 bg-gray-50">
       {/* Back Button */}
-        <button
-          onClick={() => navigate(-1)}
-          className="inline-flex gap-2 items-center mb-4 px-4 py-2 bg-blue-light text-black font-semibold rounded-md hover:bg-blue-500 transition">
-          <IoMdArrowBack className="w-5 h-5" /> Back
-        </button>
+      <button
+        onClick={() => navigate(-1)}
+        className="inline-flex gap-2 items-center mb-4 px-4 py-2 bg-blue-light text-black font-semibold rounded-md hover:bg-blue-500 transition">
+        <IoMdArrowBack className="w-5 h-5" /> Back
+      </button>
 
       {/* Main Container */}
       <div className="mt-8 flex flex-col lg:flex-row gap-6">
@@ -66,17 +77,37 @@ const OrderSummary = () => {
         {/* Booking Summary */}
         <div className="p-6 bg-blue-100 shadow-md rounded-md w-full lg:w-1/4">
           <h2 className="text-lg font-bold">Booking Summary</h2>
+
+          {/* Event Title & Price */}
           <div className="flex justify-between text-sm mt-4">
             <span className="text-gray-800">{event.title}</span>
             <span className="font-bold">INR {event.price}</span>
           </div>
 
+          {/* Ticket Quantity Selector */}
+          <div className="mt-4">
+            <label className="text-sm font-medium">Select Tickets:</label>
+            <select
+              className="w-full mt-2 p-2 border border-gray-300 rounded-md"
+              value={ticketCount}
+              onChange={(e) => setTicketCount(Number(e.target.value))}
+            >
+              {[1, 2, 3, 4, 5].map((num) => (
+                <option key={num} value={num}>
+                  {num} {num === 1 ? "Ticket" : "Tickets"}
+                </option>
+              ))}
+            </select>
+          </div>
+
           <hr className="my-4 border-gray-300" />
 
+          {/* Total Price */}
           <div className="flex justify-between text-sm font-bold">
             <span>SUB TOTAL</span>
-            <span className="pr-2">INR {event.price}</span>
+            <span className="pr-2">INR {totalPrice}</span>
           </div>
+
 
           {/* Checkbox for Confirmation */}
           <div className="flex items-center gap-2 mt-4">
@@ -87,18 +118,18 @@ const OrderSummary = () => {
           </div>
 
           {/* Proceed Button */}
-          <Link to={`/events/${event._id}/ordersummary/paymentsummary`}>
-            <button
-              className={`mt-5 w-full py-3 font-bold rounded-md transition ${isCheckboxChecked ? "bg-blue-700 text-white hover:bg-blue-800" : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                }`}
-              disabled={!isCheckboxChecked}
-            >
-              Proceed
-            </button>
-          </Link>
+          <button
+            onClick={handleProceed}
+            className={`mt-5 w-full py-3 font-bold rounded-md transition ${isCheckboxChecked ? "bg-blue-700 text-white hover:bg-blue-800" : "bg-gray-300 text-gray-500 cursor-not-allowed"
+              }`}
+            disabled={!isCheckboxChecked}
+          >
+            Proceed
+          </button>
         </div>
       </div>
     </div>
+
   );
 }
 

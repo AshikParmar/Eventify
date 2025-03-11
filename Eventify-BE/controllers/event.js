@@ -1,6 +1,7 @@
 // eventController.js
 import Event from "../models/event.js";
 import { uploadToCloudinary } from "../services/cloudinary.js";
+import { createTicket } from "./ticket.js";
 
 // Create Event
 export const createEvent = async (req, res) => {
@@ -126,16 +127,19 @@ export const deleteEvent = async (req, res) => {
     }
 };
 
+
 export const joinEvent = async (req, res) => {
     try {
-        const { eventId, userId } = req.body;
-        if (!eventId || !userId) {
-            return res.status(400).json({ success: false, message: "Event ID and User ID are required" });
+        const user = req.user;
+        const { eventId, userId , numberOfTickets, totalPrice } = req.body;
+        if (!eventId) {
+            return res.status(400).json({ success: false, message: "Event ID is required" });
         }
-        if (!eventId.match(/^[0-9a-fA-F]{24}$/) || !userId.match(/^[0-9a-fA-F]{24}$/)) {
-            return res.status(400).json({ success: false, message: "Invalid IDs" });
+        if (!eventId.match(/^[0-9a-fA-F]{24}$/)) {
+            return res.status(400).json({ success: false, message: "Invalid Event ID" });
         }
         const event = await Event.findById(eventId);
+
         if (!event) return res.status(404).json({ success: false, message: "Event not found" });
 
         if (event.participants.includes(userId)) {
@@ -146,10 +150,22 @@ export const joinEvent = async (req, res) => {
             return res.status(400).json({ success: false, message: "No available slots" });
         }
 
+        const newTicket = await createTicket(user, event, numberOfTickets, totalPrice);
+
         event.participants.push(userId);
         event.availableSlots -= 1;
         await event.save();
-        res.status(200).json({ success: true, message: "User joined the event successfully", data: event });
+
+        user.myTickets.push(newTicket._id);
+        await user.save();
+
+
+        res.status(200).json({
+          success: true,
+          message: "User joined the event successfully",
+          ticket: newTicket
+        });
+
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }

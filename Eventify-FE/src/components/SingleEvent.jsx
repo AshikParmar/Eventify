@@ -2,7 +2,6 @@ import React from "react";
 import { IoMdArrowBack } from "react-icons/io";
 import { useSelector } from "react-redux";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { joinEvents } from "../redux/services/eventJoin";
 
 const SingleEvent = () => {
     const { events } = useSelector((state) => state.event);
@@ -12,28 +11,7 @@ const SingleEvent = () => {
 
 
     const event = events.find(event => event._id === id);
-    let eventId = '';
-    let userId = '';
 
-
-
-
-    const handleJoin = async () => {
-        try {
-            if (event && user) {
-                eventId = event._id;
-                userId = user._id
-            }
-            const response = await joinEvents({ eventId, userId });
-            console.log("response", response)
-            alert(response.message);
-        } catch (error) {
-            console.log(error.response)
-        }
-
-
-
-    }
 
     return (
         <div className="p-8 bg-gray-50 min-h-screen">
@@ -66,14 +44,13 @@ const SingleEvent = () => {
                         <p className="text-gray-800 mb-2">{event.description}</p>
 
                         {user.role === "User" &&
-                            // <Link to={`/events/${event._id}/ordersummary`}>
-                            <button
-                                className="mt-6 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
-                                onClick={handleJoin}
-                            >
-                                Enroll
-                            </button>
-                            // </Link> 
+                            <Link to={`/events/${event._id}/ordersummary`}>
+                                <button
+                                    className="mt-6 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
+                                >
+                                    Enroll
+                                </button>
+                            </Link>
                         }
                     </div>
 

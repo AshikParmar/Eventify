@@ -1,5 +1,4 @@
 import cron from "node-cron";
-import mongoose from "mongoose";
 import Event from "../models/event.js";
 
 const eventStatusUpdate = () => {
@@ -17,7 +16,7 @@ const eventStatusUpdate = () => {
         { $set: { status: "Completed" } }
       );
 
-      console.log(`${result.modifiedCount} expired events marked as 'Completed'.`);
+      //console.log(`${result.modifiedCount} expired events marked as 'Completed'.`);
     } catch (error) {
       console.error(" Error updating expired events:", error);
     }

@@ -38,10 +38,10 @@ export const auth = (roles = [], isPublic = false) => async (req, res, next) => 
       return res.status(403).json({ message: "Access denied: Insufficient permissions", success: false });
     }
 
-    // Attach user info to request
     req.userId = decoded.id;
     req.userEmail = decoded.email;
     req.userRole = user.role;
+    req.user = user;
 
     next();
   } catch (err) {
