@@ -9,7 +9,6 @@ import Loading from "../ui/Loading";
 const CreateEvent = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
-    const [isSingleDay, setIsSingleDay] = useState(false)
 
     const { showSnackbar } = useGlobalUI();
     const dispatch = useDispatch();
@@ -30,6 +29,7 @@ const CreateEvent = () => {
         venue: "",
         date: "",
         endDate: "",
+        isSingleDay: false,
         startTime: "",
         endTime: "",
         price: "",
@@ -49,24 +49,24 @@ const CreateEvent = () => {
                 reader.onloadend = () => setImagePreview(reader.result);
                 reader.readAsDataURL(file);
             }
-        } else if (name === "date") {
-            setFormData({
-                ...formData,
-                date: value,
-                endDate: isSingleDay ? value : formData.endDate
-            });
-        } else if (name === "endDate") {
-            setFormData({ ...formData, endDate: value });
+        // }else if (name === "date") {
+        //     setFormData({
+        //         ...formData,
+        //         date: value,
+        //         endDate: isSingleDay ? value : formData.endDate
+        //     });
+        // } else if (name === "endDate") {
+        //     setFormData({ ...formData, endDate: value });
         } else {
             setFormData({ ...formData, [name]: value });
         }
     };
 
     const toggleSingleDayChange = () => {
-        setIsSingleDay(!isSingleDay);
         setFormData({
             ...formData,
-            endDate: isSingleDay ? "" : formData.date 
+            endDate: "",
+            isSingleDay : !formData.isSingleDay 
         });
     };
 
@@ -178,7 +178,7 @@ const CreateEvent = () => {
                         <input
                             type="date"
                             name="date"
-                            min={new Date().toISOString().split("T")[0]}
+                            // min={new Date().toISOString().split("T")[0]}
                             className="bg-gray-300 p-2 rounded-sm"
                             onChange={handleChange}
                             required
@@ -191,13 +191,13 @@ const CreateEvent = () => {
                                 <input
                                     type="checkbox"
                                     className="mr-2"
-                                    checked={isSingleDay}
+                                    checked={formData.isSingleDay}
                                     onChange={toggleSingleDayChange}
                                 />
                                 Single-Day Event
                             </label>
 
-                            {!isSingleDay && (
+                            {!formData.isSingleDay && (
                                 <div className="flex flex-col">
                                     <label className="text-gray-700 font-medium">End Date</label>
                                     <input

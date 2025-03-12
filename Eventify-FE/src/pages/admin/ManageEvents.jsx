@@ -16,14 +16,14 @@ const ManageEvents = () => {
   const [filterProperty, setFilterProperty] = useState("type");
   const [filterValue, setFilterValue] = useState("");
 
-  useEffect(()=>{
+  useEffect(() => {
 
-    const fetchingData = async() => {
-      try{
+    const fetchingData = async () => {
+      try {
         const response = await dispatch(fetchEvents());
-  
+
         // console.log(response);
-      }catch(e){
+      } catch (e) {
         console.log(e?.message);
       }
     }
@@ -66,12 +66,6 @@ const ManageEvents = () => {
         <Loading title="Loading..." />
       </div>
     );
-  } else if (error) {
-    return (
-      <div className="h-[80%] flex items-center justify-center">
-        <p className="text-red-500">Error: {error}</p>
-      </div>
-    );
   }
 
   return (
@@ -80,45 +74,45 @@ const ManageEvents = () => {
 
       {/* Search and Filter Controls */}
       <div className="flex justify-between items-center mb-4">
-        
+
         {/* Search Input */}
 
         <div className="space-x-2">
-        <input
-          type="text"
-          placeholder="Search event..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="border p-2 rounded-lg "
-        />
+          <input
+            type="text"
+            placeholder="Search event..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="border p-2 rounded-lg "
+          />
 
-        {/* Property Selector */}
-        <select
-          value={filterProperty}
-          onChange={(e) => {
-            setFilterProperty(e.target.value);
-            setFilterValue(""); // Reset selected value when changing property
-          }}
-          className="border p-2 rounded-lg"
-        >
-          <option value="type">Type</option>
-          <option value="venue">Venue</option>
-          <option value="status">Status</option>
-        </select>
+          {/* Property Selector */}
+          <select
+            value={filterProperty}
+            onChange={(e) => {
+              setFilterProperty(e.target.value);
+              setFilterValue(""); // Reset selected value when changing property
+            }}
+            className="border p-2 rounded-lg"
+          >
+            <option value="type">Type</option>
+            <option value="venue">Venue</option>
+            <option value="status">Status</option>
+          </select>
 
-        {/* Value Selector */}
-        <select
-          value={filterValue}
-          onChange={(e) => setFilterValue(e.target.value)}
-          className="border p-2 rounded-lg"
-        >
-          <option value="">All</option>
-          {getUniqueValues(filterProperty).map((value) => (
-            <option key={value} value={value}>
-              {value}
-            </option>
-          ))}
-        </select>
+          {/* Value Selector */}
+          <select
+            value={filterValue}
+            onChange={(e) => setFilterValue(e.target.value)}
+            className="border p-2 rounded-lg"
+          >
+            <option value="">All</option>
+            {getUniqueValues(filterProperty).map((value) => (
+              <option key={value} value={value}>
+                {value}
+              </option>
+            ))}
+          </select>
         </div>
         <NavLink to="/admin/manage-events/create">
           <Button className="bg-blue-600 text-white flex items-center">
@@ -128,59 +122,70 @@ const ManageEvents = () => {
       </div>
 
       {/* Events Table */}
-      <table className="w-full bg-white shadow-md rounded-lg">
-        <thead className="bg-gray-200 text-left">
-          <tr>
-            <th className="p-3">ID</th>
-            <th className="p-3">Title</th>
-            <th className="p-3">Date</th>
-            <th className="p-3">Venue</th>
-            <th className="p-3">Price</th>
-            <th className="p-3">Slots</th>
-            <th className="p-3">Status</th>
-            <th className="text-center p-3">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredEvents.length > 0 ? (
-            filteredEvents.map((event, id) => (
-              <tr key={event._id} className="border-b w-full">
-                <td className="p-3">{id + 1}.</td>
-                <td className="p-3">{event.title}</td>
-                <td className="p-3">{event.date}</td>
-                <td className="p-3">{event.venue}</td>
-                <td className="p-3">{event.price}</td>
-                <td className="p-3">{event.totalSlots}</td>
-                <td className="p-3">{event.status}</td>
-                <td className="p-3 flex justify-center space-x-2">
-                  <NavLink to={`/admin/manage-events/view/${event._id}`}>
-                    <Button className="bg-green-500 hover:bg-green-600 text-white">
-                      <FileText />
-                    </Button>
-                  </NavLink>
-                  <NavLink to={`/admin/manage-events/update/${event._id}`}>
-                    <Button className="bg-blue-500 hover:bg-blue-600 text-white">
-                      <Edit />
-                    </Button>
-                  </NavLink>
-                  <Button
-                    onClick={() => onDeleteEvent(event)}
-                    className="bg-red-500 hover:bg-red-600 text-white"
-                  >
-                    <Trash2 />
-                  </Button>
+      {error ? (
+        <div className="h-98 flex items-center justify-center">
+          <p className="text-red-500">Error: {error}</p>
+        </div>
+      )
+        :
+        (<table className="w-full bg-white shadow-md rounded-lg">
+          <thead className="bg-gray-200 text-left">
+            <tr>
+              <th className="p-3">ID</th>
+              <th className="p-3">Title</th>
+              <th className="p-3">Date</th>
+              <th className="p-3">Venue</th>
+              <th className="p-3">Price</th>
+              <th className="p-3">Slots</th>
+              <th className="p-3">Status</th>
+              <th className="text-center p-3">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredEvents.length > 0 ? (
+              filteredEvents.map((event, id) => (
+                <tr key={event._id} className="border-b w-full">
+                  <td className="p-3">{id + 1}.</td>
+                  <td className="p-3">{event.title}</td>
+                  <td className="p-3">{event.date}
+                    {!event.isSingleDay && (<span> to<br />{event.endDate}</span>)}
+                  </td>
+                  <td className="p-3">{event.venue}</td>
+                  <td className="p-3">{event.price}</td>
+                  <td className="p-3">{event.totalSlots}</td>
+                  <td className="p-3">{event.status}</td>
+                  <td className="p-3">
+                    <div className="h-full flex justify-center items-center space-x-2">
+                      <NavLink to={`/admin/manage-events/view/${event._id}`}>
+                        <Button className="bg-green-500 hover:bg-green-600 text-white">
+                          <FileText />
+                        </Button>
+                      </NavLink>
+                      <NavLink to={`/admin/manage-events/update/${event._id}`}>
+                        <Button className="bg-blue-500 hover:bg-blue-600 text-white">
+                          <Edit />
+                        </Button>
+                      </NavLink>
+                      <Button
+                        onClick={() => onDeleteEvent(event)}
+                        className="bg-red-500 hover:bg-red-600 text-white"
+                      >
+                        <Trash2 />
+                      </Button>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="8" className="text-center p-4 text-gray-700">
+                  No events found.
                 </td>
               </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan="8" className="text-center p-4 text-gray-700">
-                No events found.
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+            )}
+          </tbody>
+        </table>)
+      }
     </div>
   );
 };

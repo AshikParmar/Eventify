@@ -6,9 +6,9 @@ import { createTicket } from "./ticket.js";
 // Create Event
 export const createEvent = async (req, res) => {
     try {
-        const { title, type, venue, date, startTime, endTime, price, totalSlots } = req.body;
+        const { title, type, venue, date, endDate, startTime, endTime, isSingleDay, price, totalSlots } = req.body;
 
-        if (!title || !type || !venue || !date || !startTime || !endTime || !totalSlots) {
+        if (!title || !type || !venue || !date || !isSingleDay || !startTime || !endTime || !totalSlots) {
             return res.status(400).json({ success: false, message: "All fields are required" });
         }
         let imageUrl;
@@ -26,8 +26,10 @@ export const createEvent = async (req, res) => {
         const userId = req.userId
 
         const eventPrice = price || "Free";
+        const eventEndDate = isSingleDay ? date : endDate;
 
-        const event = new Event({ ...req.body, 
+        const event = new Event({ ...req.body,
+            endDate: eventEndDate, 
             availableSlots: totalSlots,
             price:eventPrice , 
             organizer: userId, 
@@ -92,10 +94,11 @@ export const updateEvent = async (req, res) => {
         }
 
         // Extract fields to update
-        const { title, type, venue, date, endDate, startTime, endTime, totalSlots, availableSlots , price , description } = req.body;
+        const { title, type, venue, date, isSingleDay, endDate, startTime, endTime, totalSlots, availableSlots , price , description } = req.body;
         const eventPrice = price || "Free";
+        const eventEndDate = isSingleDay ? date : endDate;
 
-        let updatedFields = { title, type, venue, date, endDate, startTime, endTime, totalSlots,availableSlots , price:eventPrice, description };
+        let updatedFields = { title, type, venue, date, endDate:eventEndDate, startTime, endTime, totalSlots,availableSlots , price:eventPrice, description };
 
         // Handle Image Upload if a new image is provided
         if (req.file) {

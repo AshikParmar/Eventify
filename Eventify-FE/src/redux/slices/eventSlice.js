@@ -110,7 +110,10 @@ const eventSlice = createSlice({
       })
       .addCase(fetchEvents.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload.error;
+        state.events = [],
+        state.pendingEvents = [],
+        state.selectedEvent = null,
+        state.error = action.payload.message;
       })
 
       // Fetch Event by ID
@@ -124,7 +127,8 @@ const eventSlice = createSlice({
       })
       .addCase(fetchEventById.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload.error;
+        state.selectedEvent = null;
+        state.error = action.payload.message;
       })
 
       // Add Event
@@ -138,7 +142,7 @@ const eventSlice = createSlice({
       })
       .addCase(addEvent.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload.error;
+        state.error = action.payload.message;
       })
 
       // Delete Event
@@ -152,7 +156,7 @@ const eventSlice = createSlice({
       })
       .addCase(deleteEvent.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload.error;
+        state.error = action.payload.message;
       })
 
       // Update Event
@@ -169,7 +173,7 @@ const eventSlice = createSlice({
       })
       .addCase(updateEvent.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload.error;
+        state.error = action.payload.message;
       })
 
       //  Join Event
@@ -189,7 +193,7 @@ const eventSlice = createSlice({
       })
       .addCase(joinEvent.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload.error;
+        state.error = action.payload.message;
       });
   },
 });

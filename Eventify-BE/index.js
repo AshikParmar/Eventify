@@ -18,7 +18,7 @@ app.use(cors({
 }));
 
 connectDB();
-eventStatusUpdate();
+//eventStatusUpdate();
 
 const PORT = process.env.PORT || 5000;
 

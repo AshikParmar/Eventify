@@ -36,7 +36,8 @@ const UserListSlice = createSlice({
         })
         .addCase(fetchUsers.rejected, (state, action) => {
           state.loading = false;
-          state.error = action.payload.error;
+          state.users = [];
+          state.error = action.payload.message;
         })
   
         // Fetch Event by ID
