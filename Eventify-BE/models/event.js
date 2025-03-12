@@ -18,6 +18,9 @@ const eventSchema = new mongoose.Schema({
     endDate: { 
         type: String, 
     },
+    isSingleDay: {
+        type: Boolean,
+    },
     startTime: {
         type: String,
     },
