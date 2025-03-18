@@ -25,6 +25,7 @@ import OrderSummary from "./pages/user/OrderSummary";
 import PaymentSummary from "./pages/user/PaymentSummary";
 import ForgotPassword from "./pages/public/ForgotPassword";
 import ResetPassword from "./pages/public/ResetPassword";
+import CalendarPage from "./pages/public/CalendarPage";
 
 function App() {
   const user = useSelector(state => state.user.user);
@@ -65,6 +66,7 @@ function App() {
                 {/* Public Routes */}
                 <Route path="/" element={<Home />} />
                 <Route path="/events" element={<Events />} />
+                <Route path="/calendar" element={<CalendarPage />} />
                 <Route path="/events/:id" element={<SingleEvent />} />
                 <Route path="/events/:id/ordersummary" element={<OrderSummary />} />
                 <Route path="/events/:id/ordersummary/paymentsummary" element={<PaymentSummary />} />

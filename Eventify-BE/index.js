@@ -7,6 +7,7 @@ import eventRoute from "./routers/event.js"
 import emailRoutes from "./routers/email.js";
 import passwordRoutes from "./routers/password.js";
 import eventStatusUpdate from "./services/cronJobs.js";
+import handler from "./api/cron-job.js";
 
 const app = express();
 app.use(express.json());
@@ -18,7 +19,9 @@ app.use(cors({
 }));
 
 connectDB();
-//eventStatusUpdate();
+// eventStatusUpdate();
+// handler();
+
 
 const PORT = process.env.PORT || 5000;
 

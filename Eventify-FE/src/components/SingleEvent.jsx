@@ -2,8 +2,10 @@ import React from "react";
 import { IoMdArrowBack } from "react-icons/io";
 import { useSelector } from "react-redux";
 import { useParams, useNavigate, Link } from "react-router-dom";
+import { useGlobalUI } from "./Global/GlobalUIContext";
 
 const SingleEvent = () => {
+    const { showSnackbar } = useGlobalUI();
     const { events } = useSelector((state) => state.event);
     const { user } = useSelector((state) => state.user);
     const { id } = useParams();
@@ -12,7 +14,21 @@ const SingleEvent = () => {
 
     const event = events.find(event => event._id === id);
 
-    const isSingleDay = event?.endDate ? event.date === event.endDate : true;
+    const handleEnroll = () => {
+        const eventDate = new Date(event.date); 
+        const currentDate = new Date();
+
+        // console.log("Event Date:", eventDate);
+        // console.log("Current Date:", currentDate);
+    
+        if (eventDate <= currentDate) {
+            showSnackbar("You cannot enroll in past events!", "error");
+            return;
+        }
+
+        navigate(`/events/${event._id}/ordersummary`);
+    
+    }
 
     return (
         <div className="p-8 bg-gray-50 min-h-screen">
@@ -37,7 +53,7 @@ const SingleEvent = () => {
                     <div className=" md:ml-10">
                         <h2 className="text-4xl font-semibold mb-2">{event.title} - <span className=" text-2xl mb-2">{event.type}</span></h2>
                         <p className="text-gray-700 mb-2 ">📅 Date: {event.date}</p>
-                        {isSingleDay ?
+                        {event.isSingleDay ?
                            ( <p className="text-gray-700 mb-2 ">One Day Event</p>)
                             :
                            ( <p className="text-gray-700 mb-2 ">End Date: {event.endDate}</p>)
@@ -50,13 +66,14 @@ const SingleEvent = () => {
                         <p className="text-gray-800 mb-2">{event.description}</p>
 
                         {user.role === "User" &&
-                            <Link to={`/events/${event._id}/ordersummary`}>
+                            // <Link to={`/events/${event._id}/ordersummary`}>
                                 <button
+                                    onClick={handleEnroll}
                                     className="mt-6 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
                                 >
                                     Enroll
                                 </button>
-                            </Link>
+                            // </Link>
                         }
                     </div>
 

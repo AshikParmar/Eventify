@@ -2,12 +2,12 @@ import mongoose from "mongoose";
 
 const ticketSchema = new mongoose.Schema(
     {
-        userId: {
+        participant: {
             type: mongoose.Schema.ObjectId,
             ref: "User",
             required: true
         },
-        eventId: { 
+        event: { 
             type: mongoose.Schema.ObjectId, 
             ref: "Event", 
             required: true 
@@ -31,12 +31,14 @@ const ticketSchema = new mongoose.Schema(
             type: Number,
         }, 
         totalPrice: { 
-            type: Number
+            type: String,
          },
         qr: { 
             type: String 
         }, // Store QR as Base64
-    });
+    }, 
+    { timestamps: true }
+);
 
  const Ticket = mongoose.model("Ticket", ticketSchema);
  export default Ticket;
