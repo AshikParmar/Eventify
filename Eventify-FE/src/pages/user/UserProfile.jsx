@@ -1,6 +1,7 @@
 import React from "react";
 import { NavLink, Routes, Route, Navigate } from "react-router-dom";
 import ProfileSection from "./ProfileSection";
+import MyTickets from "./MyTickets";
 
 
 const ProfileSidebar = () => {
@@ -20,12 +21,12 @@ const ProfileSidebar = () => {
         </li>
         <li>
         <NavLink
-            to="/user/enrolled-events"
+            to="/user/my-tickets"
             className={({ isActive }) =>
               `block p-2 text-white rounded-lg cursor-pointer ${isActive ? "bg-blue-500" : "bg-gray-400"}`
             }
           >
-            Enrolled Events
+            My Tickets
           </NavLink>
         </li>
       </ul>
@@ -38,11 +39,12 @@ const UserProfile = () => {
     <div className="flex flex-col md:flex-row min-h-screen bg-gray-100">
 
       <ProfileSidebar />
-      <main className="md:w-3/4 w-full md:p-6">
+      <main className="md:w-3/4 w-full p-2 md:p-6">
         <Routes>
           <Route index element={<Navigate to="profile" />} /> 
-          <Route path="profile" element={<ProfileSection />} />
-          <Route path="enrolled-events" element={<ProfileSection />} />
+          <Route path="/profile" element={<ProfileSection />} />
+          <Route path="/my-tickets" element={<MyTickets />} />
+          <Route path="/*"  element={<Navigate to="/user" />} />
         </Routes>
       </main>
     </div>

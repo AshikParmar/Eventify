@@ -19,22 +19,13 @@ export default async function handler(req, res) {
     // );
 
     // Update events to "Completed" when end time is reached
-    const pendingEvents = await Event.find({ endDate: { $lt: today }, status: "Pending" }).limit(100); // Adjust batch size as needed
-
-    if (pendingEvents.length === 0) {
-      console.log("✅ No pending events to update.");
-      // return res.status(200).json({ success: true, message: "No events to update." });
-    }
-
-    // Update events one by one to avoid performance issues
-    for (const event of pendingEvents) {
-      await Event.updateOne({ _id: event._id }, { $set: { status: "Completed" } });
-    }
-
-    console.log(`✅ ${pendingEvents.length} events completed (Completed).`);
+    const completedResult = await Event.updateMany(
+      { endDate: {$lt: todayISO}, status: "Pending" },
+      { $set: { status: "Completed" } }
+    );
 
     // console.log(`🎯 ${runningResult.modifiedCount} events started (Running).`);
-    // console.log(`✅ ${completedResult.modifiedCount} events completed (Completed).`);
+    console.log(`✅ ${completedResult.modifiedCount} events completed (Completed).`);
 
     return res.status(200).json({
       success: true,

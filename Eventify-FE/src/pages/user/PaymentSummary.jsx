@@ -32,6 +32,14 @@ const PaymentSummary = () => {
       return;
     }
 
+    const eventDate = new Date(event.date); 
+    const currentDate = new Date();
+
+    if (eventDate <= currentDate) {
+        showSnackbar("You cannot enroll in past events!", "error");
+        return;
+    }
+
     setIsProcessing(true);
 
     try {
@@ -41,7 +49,7 @@ const PaymentSummary = () => {
       }
 
       showSnackbar(response?.message, "success");
-      // navigate("/my-tickets"); 
+      navigate("/user/my-tickets"); 
     } catch (error) {
       showSnackbar(error.message || "Failed to Join Event.", "error");
     } finally {

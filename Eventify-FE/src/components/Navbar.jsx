@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { NavLink, useNavigate } from 'react-router-dom'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { useSelector } from "react-redux";
 import { Menu, MenuItem } from "@mui/material";
 import { useDispatch } from "react-redux";
@@ -10,7 +10,7 @@ import { useGlobalUI } from './Global/GlobalUIContext';
 
 const Navbar = () => {
 
-  const {showSnackbar, showDialog} = useGlobalUI();
+  const { showSnackbar, showDialog } = useGlobalUI();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector(state => state.user.user);
@@ -84,7 +84,7 @@ const Navbar = () => {
         open={Boolean(menuAnchor)}
         onClose={handleMenuClose}
       >
-       {user.role === "User" && <MenuItem onClick={handleProfile}>Profile</MenuItem>}
+        {user.role === "User" && <MenuItem onClick={handleProfile}>Profile</MenuItem>}
 
         <MenuItem onClick={handleLogout}>
           {/* <LogoutIcon /> */}
@@ -96,7 +96,9 @@ const Navbar = () => {
 
   return (
     <div className='bg-blue sticky top-0 z-999 flex items-center justify-between py-5 px-3 sm:px-10 text-white border-b-2 border-gray-800'>
-      <h2 className='font-bold text-2xl'>Eventify</h2>
+      <Link to="/">
+        <h2 className='font-bold text-2xl'>Eventify</h2>
+      </Link>
       {
         user?.role === "Admin" ?
           (<div className='flex gap-2'>
@@ -108,6 +110,7 @@ const Navbar = () => {
             {user ? (<>
               <NavLink to="/">Home</NavLink>
               <NavLink to="/events">Events</NavLink>
+              <NavLink to="/calendar">Calendar</NavLink>
               {profile()}
             </>)
               :

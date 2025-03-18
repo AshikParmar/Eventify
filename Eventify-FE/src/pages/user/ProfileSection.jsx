@@ -87,7 +87,7 @@ const ProfileSection = () => {
 
   return (
     <div>
-      <section className="md:bg-white md:p-6 p-4 rounded-lg md:shadow-lg mb-6">
+      <section className="mb-6">
         <h2 className="text-xl font-semibold mb-4">Profile Information</h2>
         {editMode ? (
           loading ? 

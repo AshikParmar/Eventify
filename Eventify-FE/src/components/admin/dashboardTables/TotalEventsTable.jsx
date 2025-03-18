@@ -28,7 +28,9 @@ const TotalEvents = () => {
             {events.map((event)=>{
               return  <tr key={event._id}  className="border-b">
                         <td className="p-3">{event.title}</td>
-                        <td className="p-3">{event.date}</td>
+                        <td className="p-3">{event.date}
+                          {!event.isSingleDay && (<span> to {event.endDate}</span>)}
+                        </td>
                         <td className="p-3">{event.type}</td>
                         <td className="p-3">{event.price}</td>
                         <td className="p-3">{event.status}</td>
