@@ -1,4 +1,5 @@
 import Event from "../models/event.js";
+import moment from "moment-timezone";
 
 const handler = async(req, res) => {
   if (req?.method !== "GET") {
@@ -6,9 +7,9 @@ const handler = async(req, res) => {
   }
 
   try {
-    const today = new Date();
-    const todayISO = today.toISOString().split("T")[0];
-    const currentTime = today.toTimeString().split(" ")[0].slice(0, 5); 
+    const now = moment().tz("Asia/Kolkata");
+    const todayISO = now.format("YYYY-MM-DD"); // YYYY-MM-DD format
+    const currentTime = now.format("HH:mm"); // 24-hour format HH:mm 
 
     console.log(`🕒 Running Event Update at ${currentTime} on ${todayISO}`);
  
