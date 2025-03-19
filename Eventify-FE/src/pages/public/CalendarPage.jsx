@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 const CalendarPage = () => {
  const { showDialog } = useGlobalUI();
  const navigate = useNavigate();
- const {events , loading, error } = useSelector(state => state.event);
+ const { events } = useSelector(state => state.event);
 
  const formattedEvents = events?.map(event => ({
     id: event._id, 
@@ -20,11 +20,8 @@ const CalendarPage = () => {
   }));
 
   return (
-    <div className="p-4 m-4 md:m-8 md:mx-32 rounded-lg shadow-xl bg-gray-200">
+    <div className="p-4 m-4 md:m-8 md:mx-32 rounded-lg shadow-xl bg-gray-100 ">
       <h2 className="text-xl font-bold mb-4">Event Calendar</h2>
-
-      {loading && <p className="text-center text-lg">Loading events...</p>}
-      {error && <p className="text-center text-red-500">{error}</p>}
 
       <FullCalendar
         plugins={[dayGridPlugin]}
