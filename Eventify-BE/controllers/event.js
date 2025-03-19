@@ -54,7 +54,7 @@ export const getEvents = async (req, res) => {
 
         const pendingEvents = events?.filter((event) => {
             const eventTimestamp = new Date(event.date).getTime();
-            return eventTimestamp > currDate;
+            return eventTimestamp >= currDate && event.status === "Pending";
         });
         res.status(200).json({ success: true, data: { events, pendingEvents} });
     } catch (error) {

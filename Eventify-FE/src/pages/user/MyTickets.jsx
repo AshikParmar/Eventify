@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import TicketCard from "../../components/TicketCard";
 import { getUserTickets } from "../../redux/services/eventJoin";
+import Loading from "../../components/ui/Loading";
 
 const MyTickets = () => {
     const [tickets, setTickets] = useState([]);
@@ -9,6 +10,7 @@ const MyTickets = () => {
 
     useEffect(() => {
         const fetchTickets = async () => {
+            setError(null);
             setLoading(true);
             try {
                 const res = await getUserTickets();
@@ -28,18 +30,23 @@ const MyTickets = () => {
         <div>
             <h2 className="text-xl font-semibold mb-4">My Tickets</h2>
 
-            {loading && <p>Loading...</p>}
-            {error && <p className="text-red-500">{error}</p>}
-            
-            <div className="flex flex-wrap gap-4">
-                {tickets?.length > 0 ? (
-                    tickets.map((ticket) => <TicketCard key={ticket._id} ticket={ticket} />)
-                ) : (
-                    <div className="text-gray-500 text-center w-full py-4">
-                        No Tickets Found
-                    </div>
-                )}
-            </div>
+            {error ? (
+                <p className="text-red-500">{error}</p>
+            ) : loading ? (
+                <div className="h-96 flex items-center justify-center">
+                    <Loading />
+                </div>
+            ) : (
+                <div className="flex flex-wrap gap-4">
+                    {tickets?.length > 0 ? (
+                        tickets.map((ticket) => <TicketCard key={ticket._id} ticket={ticket} />)
+                    ) : (
+                        <div className="text-gray-500 text-center w-full py-4">
+                            No Tickets Found
+                        </div>
+                    )}
+                </div>
+            )}
         </div>
     );
 };

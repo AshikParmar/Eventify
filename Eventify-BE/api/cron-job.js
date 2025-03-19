@@ -1,6 +1,6 @@
 import Event from "../models/event.js";
 
-export default async function handler(req, res) {
+const handler = async(req, res) => {
   if (req?.method !== "GET") {
     return res.status(405).json({ message: "Method Not Allowed" });
   }
@@ -11,26 +11,26 @@ export default async function handler(req, res) {
     const currentTime = today.toTimeString().split(" ")[0].slice(0, 5); 
 
     console.log(`🕒 Running Event Update at ${currentTime} on ${todayISO}`);
-
+ 
     // Update events to "Running" when start time is reached
-    // const runningResult = await Event.updateMany(
-    //   { date: {$lte: todayISO}, status: "Pending" },
-    //   { $set: { status: "Running" } }
-    // );
+    const runningResult = await Event.updateMany(
+      { date: {$lte: todayISO}, startTime: {$lte: currentTime}, status: "Pending" },
+      { $set: { status: "Running" } }
+    );
 
     // Update events to "Completed" when end time is reached
     const completedResult = await Event.updateMany(
-      { endDate: {$lt: todayISO}, status: "Pending" },
+      { endDate: {$lte: todayISO},endTime: {$lte: currentTime}, status: "Running" },
       { $set: { status: "Completed" } }
     );
 
-    // console.log(`🎯 ${runningResult.modifiedCount} events started (Running).`);
+    console.log(`🎯 ${runningResult.modifiedCount} events started (Running).`);
     console.log(`✅ ${completedResult.modifiedCount} events completed (Completed).`);
 
     return res.status(200).json({
       success: true,
       message: "Event statuses updated",
-      // runningUpdated: runningResult.modifiedCount,
+      runningUpdated: runningResult.modifiedCount,
       completedUpdated: completedResult.modifiedCount,
     });
 
@@ -39,3 +39,5 @@ export default async function handler(req, res) {
     return res.status(500).json({ success: false, message: "Error updating event statuses" });
   }
 }
+
+export default handler;

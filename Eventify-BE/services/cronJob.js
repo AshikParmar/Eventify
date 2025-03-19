@@ -7,7 +7,7 @@ const eventStatusUpdate = () => {
 
     try {
       const now = new Date();
-      const todayISO = now.toISOString().split("T")[0]; //Today's date in "YYYY-MM-DD"
+      const todayISO = now.toISOString().split("T")[0]; 
       const currentTime = now.toTimeString().split(" ")[0].slice(0, 5); // Current time in "HH:mm"
 
       console.log(`🕒 Current Time: ${currentTime}, 📅 Today: ${todayISO}`);

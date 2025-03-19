@@ -57,7 +57,7 @@ const Navbar = () => {
 
   const profile = () => {
     return <div>
-      <button onClick={handleMenuOpen} className="text-white flex items-center gap-2">
+      <button onClick={handleMenuOpen} className="text-white flex items-center gap-2 hover:text-blue-500 transition duration-300">
         <label > {user?.username} </label>
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -106,21 +106,67 @@ const Navbar = () => {
             {profile()}
           </div>)
           :
-          (<ul className='flex list-none gap-2 sm:gap-5 text-lg'>
-            {user ? (<>
-              <NavLink to="/">Home</NavLink>
-              <NavLink to="/events">Events</NavLink>
-              <NavLink to="/calendar">Calendar</NavLink>
-              {profile()}
-            </>)
-              :
-              (<>
-                <NavLink to="/about-us">About Us</NavLink>
-                <NavLink to="/contact-us">Contact Us</NavLink>
-                <NavLink to="/login">LogIn</NavLink>
-              </>)
-            }
-          </ul>)
+          (<ul className="flex list-none gap-2 text-lg">
+            {user ? (
+              <>
+                <NavLink
+                  to="/"
+                  className={({ isActive }) =>
+                    `hover:text-blue-500 transition duration-300 px-2 ${isActive ? "border-b-3 border-blue-500 font-semibold" : ""
+                    }`
+                  }
+                >
+                  Home
+                </NavLink>
+
+                <NavLink
+                  to="/events"
+                  className={({ isActive }) =>
+                    `hover:text-blue-500 transition duration-300 px-2 ${isActive ? "border-b-3 border-blue-500 font-semibold" : ""
+                    }`
+                  }
+                >
+                  Events
+                </NavLink>
+
+                <NavLink
+                  to="/calendar"
+                  className={({ isActive }) =>
+                    `hover:text-blue-500 transition duration-300 px-2 ${isActive ? "border-b-3 border-blue-500 font-semibold" : ""
+                    }`
+                  }
+                >
+                  Calendar
+                </NavLink>
+
+                {profile()}
+              </>
+            ) : (
+              <>
+                <NavLink
+                  to="/about-us"
+                  className="hover:text-blue-500 transition duration-300 px-2"
+                >
+                  About Us
+                </NavLink>
+
+                <NavLink
+                  to="/contact-us"
+                  className="hover:text-blue-500 transition duration-300 px-2"
+                >
+                  Contact Us
+                </NavLink>
+
+                <NavLink
+                  to="/login"
+                  className="hover:text-blue-500 transition duration-300 px-2"
+                >
+                  LogIn
+                </NavLink>
+              </>
+            )}
+          </ul>
+          )
       }
     </div>
   )
