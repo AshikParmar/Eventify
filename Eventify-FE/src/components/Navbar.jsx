@@ -13,11 +13,11 @@ const Navbar = () => {
 
   const profileMenu = () => (
     <div className="flex items-center justify-center">
-      <NavLink 
-      to={"/user/profile"}
-      onClick={() => setMobileMenuOpen(false)}
-      className={({ isActive }) =>
-                    `hover:text-blue-400 transition duration-300 px-2 sm:${ isActive && "border-b-2 border-blue-600 sm:font-semibold" }`}
+      <NavLink
+        to={"/user/profile"}
+        onClick={() => setMobileMenuOpen(false)}
+        className={({ isActive }) => `hover:text-blue-400 transition duration-300 px-2 ${isActive ? "sm:border-b-2 sm:border-blue-600 sm:font-semibold" : ""}`
+        }
       >
         <button
           className="flex items-center gap-2 cursor-pointer hover:text-blue-400 transition duration-300"
@@ -107,15 +107,15 @@ const Navbar = () => {
               (link) =>
                 (user ? link.auth : !link.auth) && (
                   <NavLink
-                  key={link.to}
-                  to={link.to}
-                  className={({ isActive }) =>
-                    `hover:text-blue-400 transition duration-300 px-2 ${ isActive && "border-b-2 border-blue-600 font-semibold" }`
-                  }
-                >
-                  {link.label}
-                </NavLink>
-                
+                    key={link.to}
+                    to={link.to}
+                    className={({ isActive }) =>
+                      `hover:text-blue-400 transition duration-300 px-2 ${isActive && "border-b-2 border-blue-600 font-semibold"}`
+                    }
+                  >
+                    {link.label}
+                  </NavLink>
+
                 )
             )}
             {user && profileMenu()}
