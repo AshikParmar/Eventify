@@ -35,6 +35,10 @@ const eventSchema = new mongoose.Schema({
         type: mongoose.Schema.ObjectId,
         ref: "User"
     }],
+    tickets: [{
+        type: mongoose.Schema.ObjectId,
+        ref: "Ticket"
+    }],
     price: {
         type: String,
         default: "Free"
@@ -50,7 +54,7 @@ const eventSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum:["Pending","Running","Completed","Rejected"],
+        enum:["Pending","Ongoing","Completed","Rejected"],
         default: "Pending",
     },
     image: {

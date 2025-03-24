@@ -69,7 +69,7 @@ export const getEventById = async (req, res) => {
         if (!req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
             return res.status(400).json({ success: false, message: "Invalid event ID" });
         }
-        const event = await Event.findById(req.params.id).populate("organizer participants");
+        const event = await Event.findById(req.params.id).populate("organizer participants tickets");
         if (!event) return res.status(404).json({ success: false, message: "Event not found" });
         res.status(200).json({ success: true, data: event });
     } catch (error) {
@@ -161,7 +161,8 @@ export const joinEvent = async (req, res) => {
         const newTicket = await createTicket(user, event, numberOfTickets, totalPrice);
 
         event.participants.push(userId);
-        event.availableSlots -= 1;
+        event.tickets.push(newTicket._id);
+        event.availableSlots -= numberOfTickets;
         await event.save();
 
         user.myTickets.push(newTicket._id);

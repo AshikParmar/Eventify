@@ -21,7 +21,7 @@ export const fetchEvents = createAsyncThunk("events/fetchEvents", async (_, { re
 // Fetch Event by ID
 export const fetchEventById = createAsyncThunk("events/fetchEventById", async (eventId, { rejectWithValue }) => {
   try {
-    const response = await axios.get(`${API_URL}/fetchevents/${eventId}`);
+    const response = await axios.get(`${API_URL}/getevent/${eventId}`);
     return response.data;
   } catch (error) {
     return rejectWithValue(error.response.data);
@@ -124,6 +124,7 @@ const eventSlice = createSlice({
       .addCase(fetchEventById.fulfilled, (state, action) => {
         state.loading = false;
         state.selectedEvent = action.payload.data;
+        state.error = null
       })
       .addCase(fetchEventById.rejected, (state, action) => {
         state.loading = false;

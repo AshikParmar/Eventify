@@ -26,6 +26,7 @@ import PaymentSummary from "./pages/user/PaymentSummary";
 import ForgotPassword from "./pages/public/ForgotPassword";
 import ResetPassword from "./pages/public/ResetPassword";
 import CalendarPage from "./pages/public/CalendarPage";
+import ViewUserPage from "./components/admin/ViewUser";
 
 function App() {
   const user = useSelector(state => state.user.user);
@@ -44,6 +45,7 @@ function App() {
               <Route path="/admin/manage-events/create" element={<CreateEvent />} />
               <Route path="/admin/manage-events/update/:id" element={<UpdateEvent />} />
               <Route path="/admin/manage-events/view/:id" element={<ViewEvent />} />
+              <Route path="/admin/user/:id" element={<ViewUserPage />} />
               <Route path="/admin/settings" element={<Settings />} />
               <Route path="/*" element={<Navigate to="/admin/dashboard" />} />
             </Routes>

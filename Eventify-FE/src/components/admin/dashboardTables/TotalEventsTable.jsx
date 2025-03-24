@@ -21,11 +21,11 @@ const TotalEvents = () => {
               <th className="p-3">Date</th>
               <th className="p-3">Category</th>
               <th className="p-3">Price</th>
-              <th className="w-5 p-3 ">Status</th>
+              <th className= "p-3 text-right">Status</th>
             </tr>
           </thead>
           <tbody>
-            {events.map((event)=>{
+            {events?.map((event)=>{
               return  <tr key={event._id}  className="border-b">
                         <td className="p-3">{event.title}</td>
                         <td className="p-3">{event.date}
@@ -33,7 +33,7 @@ const TotalEvents = () => {
                         </td>
                         <td className="p-3">{event.type}</td>
                         <td className="p-3">{event.price}</td>
-                        <td className="p-3">{event.status}</td>
+                        <td className="p-3 text-right">{event.status}</td>
                       </tr>
 
             })} 

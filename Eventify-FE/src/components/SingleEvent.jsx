@@ -31,7 +31,7 @@ const SingleEvent = () => {
     }
 
     return (
-        <div className="p-8 bg-gray-50 min-h-screen">
+        <div className={` bg-gray-100 ${user.role === "User" && "min-h-screen p-4 md:p-8"}`}>
 
             {/* Back Button */}
             <button
@@ -60,10 +60,10 @@ const SingleEvent = () => {
                         }
                         <p className="text-gray-700 mb-2">Time: {event.startTime} to {event.endTime}</p>
 
-                        <p className="text-gray-700 mb-2">📍 venue: {event.venue}</p>
-                        <p className="text-gray-700 mb-2">💲 Price: {event.price}</p>
-                        <p className="text-gray-800 mb-2">Remaining Slots: {event.availableSlots}</p>
-                        <p className="text-gray-800 mb-2">{event.description}</p>
+                        <p className="text-gray-700 mb-2">📍 Venue: {event.venue}</p>
+                        <p className="text-gray-700 mb-2">💸 Price: {event.price === "Free" ? "Free" : `${event.price} Rs.`}</p>
+                        <p className="text-gray-800 mb-2">🎟️ Remaining Slots: {event.availableSlots}</p>
+                        <p className="text-gray-800 mb-2">Description: {event.description}</p>
 
                         {user.role === "User" &&
                             // <Link to={`/events/${event._id}/ordersummary`}>

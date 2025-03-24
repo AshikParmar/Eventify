@@ -86,7 +86,7 @@ const ProfileSection = () => {
 
 
   return (
-    <div>
+    <div >
       <section className="mb-6">
         <h2 className="text-xl font-semibold mb-4">Profile Information</h2>
         {editMode ? (
@@ -147,7 +147,7 @@ const ProfileSection = () => {
             </div>
           </div>
         ) : (
-          <section className="bg-white p-6 rounded-lg shadow-lg md:mb-6 md:m-0 m-4">
+          <section className="bg-white p-6 w-fit rounded-lg shadow-lg md:mb-6 md:m-0 m-4">
             <form onSubmit={handlePasswordChange} className="space-y-4">
               <div className="flex flex-col gap-1">
                 <label className="text-gray-700 font-medium">Old Password</label>

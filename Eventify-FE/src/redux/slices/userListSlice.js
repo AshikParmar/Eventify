@@ -13,6 +13,21 @@ export const fetchUsers = createAsyncThunk("user/fetchUsers", async (_, { reject
     }
   });
 
+
+  export const fetchUserById = createAsyncThunk(
+    "user/fetchUserById",
+    async (userId, { rejectWithValue }) => {
+      try {
+        const response = await axios.get(`${API_URL}/getuser/${userId}`);
+        return response.data;
+      } catch (error) {
+        console.log(error)
+        return rejectWithValue(error.response.data.message || "Error In Fetching Data");
+      }
+    }
+  );
+  
+
 // Create Slice
 const UserListSlice = createSlice({
     name: "userList",
@@ -40,19 +55,20 @@ const UserListSlice = createSlice({
           state.error = action.payload.message;
         })
   
-        // Fetch Event by ID
-        // .addCase(fetchEventById.pending, (state) => {
-        //   state.loading = true;
-        //   state.error = null;
-        // })
-        // .addCase(fetchEventById.fulfilled, (state, action) => {
-        //   state.loading = false;
-        //   state.selectedEvent = action.payload.data;
-        // })
-        // .addCase(fetchEventById.rejected, (state, action) => {
-        //   state.loading = false;
-        //   state.error = action.payload.error;
-        // })
+        // Fetch User by ID
+        .addCase(fetchUserById.pending, (state) => {
+          state.loading = true;
+          state.error = null;
+        })
+        .addCase(fetchUserById.fulfilled, (state, action) => {
+          state.loading = false;
+          state.selectedUser = action.payload.data;
+          state.error = null
+        })
+        .addCase(fetchUserById.rejected, (state, action) => {
+          state.loading = false;
+          state.error = action.payload;
+        })
     },
 });  
 

@@ -31,7 +31,8 @@ const ticketSchema = new mongoose.Schema(
             type: Number,
         }, 
         totalPrice: { 
-            type: String,
+            type: Number,
+            default: 0,
          },
         qr: { 
             type: String 

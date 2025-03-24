@@ -37,7 +37,7 @@ const TicketCard = ({ ticket }) => {
 
           <div className="flex justify-center mt-3 text-gray-600 text-sm">
             <div className="border-r-2 p-2">
-              <p className="font-bold">{ticket.totalPrice || 0}</p>
+              <p className="font-bold">{ticket.totalPrice === 0 ? "Free" : ticket.totalPrice}</p>
               <p>Price</p>
             </div>
             <div className="p-2">
