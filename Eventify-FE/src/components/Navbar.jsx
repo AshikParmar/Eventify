@@ -56,9 +56,9 @@ const Navbar = () => {
 
 
   const profile = () => {
-    return <div>
-      <button onClick={handleMenuOpen} className="text-white flex items-center gap-2 hover:text-blue-500 transition duration-300">
-        <label > {user?.username} </label>
+    return <div >
+      <button onClick={handleMenuOpen} className="text-white flex items-center gap-2 cursor-pointer hover:text-blue-500 transition duration-300">
+         {user?.username} 
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24" height="24"

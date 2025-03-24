@@ -20,7 +20,7 @@ const OrderSummary = () => {
   }, [id]);
 
 
-  const totalPrice = event?.price !== "Free" ? event?.price * ticketCount : "Free" ;
+  const totalPrice = event?.price === "Free" ? 0 : event?.price * ticketCount;
 
   const handleCheckboxChange = (e) => {
     setIsCheckboxChecked(e.target.checked);

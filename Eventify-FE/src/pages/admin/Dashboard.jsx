@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Card from "../../components/ui/card";
-import { Plus, Calendar, Users, Activity, CloudHail } from "lucide-react";
+import { Calendar, Users, Activity } from "lucide-react";
 import TotalEvents from "../../components/admin/dashboardTables/TotalEventsTable";
 import UsersList from "../../components/admin/dashboardTables/UsersList";
 import UpcomingEvents from "../../components/admin/dashboardTables/UpcomingEventsTable";
@@ -12,10 +12,8 @@ const Dashboard = () => {
 
   const { events , pendingEvents } = useSelector((state) => state.event);
   const { users } = useSelector((state) => state.userList);
-  // console.log("events", events);
-  // console.log("pendingEvents",pendingEvents);
 
-  const [activeTable, setActiveTable] = useState("upcoming");
+  const [activeTable, setActiveTable] = useState("");
   const dispatch = useDispatch();
   
   useEffect(() => {
@@ -39,13 +37,13 @@ const Dashboard = () => {
 
   return (
     <div className="p-6 space-y-6">
-      <h2 className="text-2xl font-bold">Admin Dashboard</h2>
+      <h2 className="text-2xl font-bold">Dashboard</h2>
 
     
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div onClick={()=>setActiveTable("events")}><Card title="Total Events" value={events.length} icon={<Calendar />} /></div>
-        <div onClick={()=>setActiveTable("users")}><Card title="Users Enrolled" value={users.length} icon={<Users />} /></div>
-        <div onClick={()=>setActiveTable("upcoming")}><Card title="Upcoming Events" value={pendingEvents.length} icon={<Activity />} /></div>
+        <div onClick={()=>setActiveTable("events")}><Card title="Total Events" value={events?.length} icon={<Calendar />} /></div>
+        <div onClick={()=>setActiveTable("users")}><Card title="Users Enrolled" value={users?.length} icon={<Users />} /></div>
+        <div onClick={()=>setActiveTable("upcoming")}><Card title="Upcoming Events" value={pendingEvents?.length} icon={<Activity />} /></div>
       </div>
 
 

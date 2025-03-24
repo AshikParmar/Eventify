@@ -15,32 +15,31 @@ const ManageEvents = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterProperty, setFilterProperty] = useState("type");
   const [filterValue, setFilterValue] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
 
   useEffect(() => {
-
-    const fetchingData = async () => {
-      try {
-        const response = await dispatch(fetchEvents());
-
-        // console.log(response);
-      } catch (e) {
-        console.log(e?.message);
-      }
-    }
-
-    fetchingData();
-  }, []);
+    dispatch(fetchEvents());
+  }, [dispatch]);
 
   // Get unique values for the selected property
   const getUniqueValues = (property) => {
     return [...new Set(events.map((event) => event[property]))].filter(Boolean);
   };
 
-  // Filter events based on searchQuery or selected filter
+  // Filter events based on search, filter, and date range
   const filteredEvents = events.filter((event) => {
     const matchesSearch = event?.type?.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesFilter = filterValue ? event[filterProperty] === filterValue : true;
-    return matchesSearch && matchesFilter;
+
+    const eventDate = new Date(event.date).getTime();
+    const start = startDate ? new Date(startDate).getTime() : null;
+    const end = endDate ? new Date(endDate).getTime() : null;
+
+    const matchesDateRange =
+      (!start || eventDate >= start) && (!end || eventDate <= end);
+
+    return matchesSearch && matchesFilter && matchesDateRange;
   });
 
   // Delete row handler
@@ -73,47 +72,67 @@ const ManageEvents = () => {
       <h2 className="text-2xl font-bold mb-4">Manage Events</h2>
 
       {/* Search and Filter Controls */}
-      <div className="flex justify-between items-center mb-4">
-
+      <div className="flex justify-between items-end mb-4 flex-wrap gap-2">
         {/* Search Input */}
+        <input
+          type="text"
+          placeholder="Search event..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="border p-2 rounded-lg flex-1"
+        />
 
-        <div className="space-x-2">
+        {/* Property Selector */}
+        <select
+          value={filterProperty}
+          onChange={(e) => {
+            setFilterProperty(e.target.value);
+            setFilterValue("");
+          }}
+          className="border p-2 rounded-lg"
+        >
+          <option value="type">Category</option>
+          <option value="venue">Venue</option>
+          <option value="status">Status</option>
+        </select>
+
+        {/* Value Selector */}
+        <select
+          value={filterValue}
+          onChange={(e) => setFilterValue(e.target.value)}
+          className="border p-2 rounded-lg"
+        >
+          <option value="">All</option>
+          {getUniqueValues(filterProperty).map((value) => (
+            <option key={value} value={value}>
+              {value}
+            </option>
+          ))}
+        </select>
+
+        {/* Date Range Filters */}
+        <div className="flex flex-col">
+          <label className="font-semibold" >Start Date</label>
+
           <input
-            type="text"
-            placeholder="Search event..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="border p-2 rounded-lg "
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            className="border p-2 rounded-lg"
           />
-
-          {/* Property Selector */}
-          <select
-            value={filterProperty}
-            onChange={(e) => {
-              setFilterProperty(e.target.value);
-              setFilterValue(""); // Reset selected value when changing property
-            }}
-            className="border p-2 rounded-lg"
-          >
-            <option value="type">Type</option>
-            <option value="venue">Venue</option>
-            <option value="status">Status</option>
-          </select>
-
-          {/* Value Selector */}
-          <select
-            value={filterValue}
-            onChange={(e) => setFilterValue(e.target.value)}
-            className="border p-2 rounded-lg"
-          >
-            <option value="">All</option>
-            {getUniqueValues(filterProperty).map((value) => (
-              <option key={value} value={value}>
-                {value}
-              </option>
-            ))}
-          </select>
         </div>
+        <div className="flex flex-col">
+          <label className="font-semibold">End Date</label>
+
+          <input
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            className="border p-2 rounded-lg"
+          />
+        </div>
+
+
         <NavLink to="/admin/manage-events/create">
           <Button className="bg-blue-600 text-white flex items-center">
             <Plus className="mr-2" /> Add New Event
@@ -126,9 +145,8 @@ const ManageEvents = () => {
         <div className="h-98 flex items-center justify-center">
           <p className="text-red-500">Error: {error}</p>
         </div>
-      )
-        :
-        (<table className="w-full bg-white shadow-md rounded-lg">
+      ) : (
+        <table className="w-full bg-white shadow-md rounded-lg">
           <thead className="bg-gray-200 text-left">
             <tr>
               <th className="p-3">ID</th>
@@ -136,7 +154,8 @@ const ManageEvents = () => {
               <th className="p-3">Date</th>
               <th className="p-3">Venue</th>
               <th className="p-3">Price</th>
-              <th className="p-3">Slots</th>
+              <th className="p-3 text-right">Slots</th>
+              <th className="p-3 text-right">Participants</th>
               <th className="p-3">Status</th>
               <th className="text-center p-3">Actions</th>
             </tr>
@@ -147,12 +166,14 @@ const ManageEvents = () => {
                 <tr key={event._id} className="border-b w-full">
                   <td className="p-3">{id + 1}.</td>
                   <td className="p-3">{event.title}</td>
-                  <td className="p-3">{event.date}
-                    {!event.isSingleDay && (<span> to<br />{event.endDate}</span>)}
+                  <td className="p-3">
+                    {event.date}
+                    {!event.isSingleDay && <span> to<br />{event.endDate}</span>}
                   </td>
                   <td className="p-3">{event.venue}</td>
                   <td className="p-3">{event.price}</td>
-                  <td className="p-3">{event.totalSlots}</td>
+                  <td className="p-3 text-right">{event.totalSlots}</td>
+                  <td className="p-3 text-right">{event.participants.length}</td>
                   <td className="p-3">{event.status}</td>
                   <td className="p-3">
                     <div className="h-full flex justify-center items-center space-x-2">
@@ -178,14 +199,14 @@ const ManageEvents = () => {
               ))
             ) : (
               <tr>
-                <td colSpan="8" className="text-center p-4 text-gray-700">
+                <td colSpan="9" className="text-center p-4 text-gray-700">
                   No events found.
                 </td>
               </tr>
             )}
           </tbody>
-        </table>)
-      }
+        </table>
+      )}
     </div>
   );
 };

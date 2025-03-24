@@ -14,24 +14,24 @@ const handler = async(req, res) => {
     console.log(`🕒 Running Event Update at ${currentTime} on ${todayISO}`);
  
     // Update events to "Running" when start time is reached
-    const runningResult = await Event.updateMany(
+    const startedResult = await Event.updateMany(
       { date: {$lte: todayISO}, startTime: {$lte: currentTime}, status: "Pending" },
-      { $set: { status: "Running" } }
+      { $set: { status: "Ongoing" } }
     );
 
     // Update events to "Completed" when end time is reached
     const completedResult = await Event.updateMany(
-      { endDate: {$lte: todayISO},endTime: {$lte: currentTime}, status: "Running" },
+      { endDate: {$lte: todayISO},endTime: {$lte: currentTime}, status: "Ongoing" },
       { $set: { status: "Completed" } }
     );
 
-    console.log(`🎯 ${runningResult.modifiedCount} events started (Running).`);
+    console.log(`🎯 ${startedResult.modifiedCount} events started (Ongoing).`);
     console.log(`✅ ${completedResult.modifiedCount} events completed (Completed).`);
 
     return res.status(200).json({
       success: true,
       message: "Event statuses updated",
-      runningUpdated: runningResult.modifiedCount,
+      startedUpdated: startedResult.modifiedCount,
       completedUpdated: completedResult.modifiedCount,
     });
 

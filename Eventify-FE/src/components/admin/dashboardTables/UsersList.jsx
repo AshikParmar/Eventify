@@ -1,6 +1,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import Loading from "../../ui/Loading";
+import { Link } from "react-router-dom";
 
 const UsersList = () => {
 
@@ -18,17 +19,23 @@ const UsersList = () => {
           <tr>
             <th className="p-3">ID</th>
             <th className="p-3">Name</th>
-            <th className="p-3">Email</th>
-            <th className="w-5 p-3"></th>
+            <th className="p-3 w-60">Email</th>
+            <th className="p-3 text-right ">Joined Date</th>
+            <th className="p-3 text-right ">Events Joined</th>
+            <th className="p-3"></th>
           </tr>
         </thead>
         <tbody>
-          {users.map((user,i) => {
+          {users?.map((user,i) => {
             return <tr key={user._id} className="border-b">
               <td className="p-3">{i+1}</td>
               <td className="p-3">{user.username}</td>
               <td className="p-3">{user.email}</td>
-              <td className="p-3">View</td>
+              <td className="p-3 text-right ">{user.createdAt?.split("T")[0] || "N/A"}</td>
+              <td className="p-3 text-right">{user.myTickets.length}</td>
+              <td className="p-3 text-blue-light text-right">
+                <Link to={`/admin/user/${user._id}`}>View</Link>
+              </td>
             </tr>
 
           })}

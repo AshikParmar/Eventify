@@ -9,7 +9,7 @@ const router = express.Router();
 
 router.post("/create",auth(["Admin"]), upload.single("image"), createEvent);
 router.get("/fetchevents", getEvents);
-router.get("/fetchevents/:id", getEventById);
+router.get("/getevent/:id", getEventById);
 router.put("/update/:id",auth(["Admin"]),  upload.single("image") ,updateEvent);
 router.delete("/delete/:id", auth(["Admin"]),deleteEvent);
 router.post("/join-event",auth(["User"]),joinEvent)
