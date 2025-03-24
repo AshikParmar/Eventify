@@ -1,177 +1,129 @@
-import React, { useState } from 'react'
-import { Link, NavLink, useNavigate } from 'react-router-dom'
+import React, { useState } from "react";
+import { Link, NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { Menu, MenuItem } from "@mui/material";
-import { useDispatch } from "react-redux";
-import { logout } from '../redux/slices/userSlice';
-import { useGlobalUI } from './Global/GlobalUIContext';
-
-
+import { Menu as MenuIcon, X as CloseIcon } from "lucide-react";
 
 const Navbar = () => {
+  const user = useSelector((state) => state.user.user);
 
-  const { showSnackbar, showDialog } = useGlobalUI();
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const user = useSelector(state => state.user.user);
-  // console.log(user);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false); // State for Burger Menu
 
-  const [menuAnchor, setMenuAnchor] = useState(null);
-
-  const handleMenuOpen = (event) => {
-    setMenuAnchor(event.currentTarget);
-  };
-
-  const handleMenuClose = () => {
-    setMenuAnchor(null);
-  };
-
-  const handleLogout = async () => {
-    showDialog(
-      "Confirm Logout",
-      `Are you sure you want to Logout?`,
-      async () => {
-        try {
-          const response = await dispatch(logout());
-          // console.log('response: ', response);
-          navigate("/login");
-          showSnackbar("Logout successfully!", "success");
-          // window.location.reload();
-
-        } catch (error) {
-          showSnackbar(
-            error.message || "Failed to Logout.",
-            "error"
-          );
-        }
-      }
-    );
-    handleMenuClose();
-  };
-
-  const handleProfile = () => {
-    navigate("/user");
-    handleMenuClose();
-  }
+  const toggleMobileMenu = () => setMobileMenuOpen(!mobileMenuOpen);
 
 
-  const profile = () => {
-    return <div >
-      <button onClick={handleMenuOpen} className="text-white flex items-center gap-2 cursor-pointer hover:text-blue-500 transition duration-300">
-         {user?.username} 
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24" height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="white"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-
-          <circle cx="12" cy="12" r="11" stroke="white" />
-          <circle cx="12" cy="8" r="3" />
-          <path d="M8 16c2-3 6-3 8 0" />
-
-        </svg>
-
-
-      </button>
-      <Menu
-        className=""
-        anchorEl={menuAnchor}
-        open={Boolean(menuAnchor)}
-        onClose={handleMenuClose}
+  const profileMenu = () => (
+    <div className="flex items-center justify-center">
+      <NavLink 
+      to={"/user/profile"}
+      onClick={() => setMobileMenuOpen(false)}
+      className={({ isActive }) =>
+                    `hover:text-blue-400 transition duration-300 px-2 sm:${ isActive && "border-b-2 border-blue-600 sm:font-semibold" }`}
       >
-        {user.role === "User" && <MenuItem onClick={handleProfile}>Profile</MenuItem>}
-
-        <MenuItem onClick={handleLogout}>
-          {/* <LogoutIcon /> */}
-          <p className="">Logout</p>
-        </MenuItem>
-      </Menu>
+        <button
+          className="flex items-center gap-2 cursor-pointer hover:text-blue-400 transition duration-300"
+        >
+          {user?.username}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="white"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <circle cx="12" cy="12" r="11" />
+            <circle cx="12" cy="8" r="3" />
+            <path d="M8 16c2-3 6-3 8 0" />
+          </svg>
+        </button>
+      </NavLink>
     </div>
-  }
+  );
+
+  const navLinks = [
+    { to: "/", label: "Home", auth: true },
+    { to: "/events", label: "Events", auth: true },
+    { to: "/calendar", label: "Calendar", auth: true },
+    { to: "/about-us", label: "About Us", auth: false },
+    { to: "/contact-us", label: "Contact Us", auth: false },
+    { to: "/login", label: "Log In", auth: false },
+  ];
 
   return (
-    <div className='bg-blue sticky top-0 z-999 flex items-center justify-between py-5 px-3 sm:px-10 text-white border-b-2 border-gray-800'>
-      <Link to="/">
-        <h2 className='font-bold text-2xl'>Eventify</h2>
+    <nav className="bg-blue sticky top-0 w-full z-50 flex items-center justify-between py-4 px-6 sm:px-10 text-white border-b-2 border-gray-800">
+      {/* Logo */}
+      <Link to="/" className="text-2xl font-bold">
+        Eventify
       </Link>
-      {
-        user?.role === "Admin" ?
-          (<div className='flex gap-2'>
-            <p>Wellcome, Admin</p>
-            {profile()}
-          </div>)
-          :
-          (<ul className="flex list-none gap-2 text-lg">
-            {user ? (
-              <>
-                <NavLink
-                  to="/"
-                  className={({ isActive }) =>
-                    `hover:text-blue-500 transition duration-300 px-2 ${isActive ? "border-b-3 border-blue-500 font-semibold" : ""
-                    }`
-                  }
-                >
-                  Home
-                </NavLink>
 
-                <NavLink
-                  to="/events"
-                  className={({ isActive }) =>
-                    `hover:text-blue-500 transition duration-300 px-2 ${isActive ? "border-b-3 border-blue-500 font-semibold" : ""
-                    }`
-                  }
-                >
-                  Events
-                </NavLink>
+      {/* Burger Menu Button */}
+      <button className="sm:hidden text-white" onClick={toggleMobileMenu} aria-label="Toggle Menu">
+        {mobileMenuOpen ? <CloseIcon size={30} /> : <MenuIcon size={30} />}
+      </button>
 
-                <NavLink
-                  to="/calendar"
-                  className={({ isActive }) =>
-                    `hover:text-blue-500 transition duration-300 px-2 ${isActive ? "border-b-3 border-blue-500 font-semibold" : ""
-                    }`
-                  }
-                >
-                  Calendar
-                </NavLink>
-
-                {profile()}
-              </>
-            ) : (
-              <>
-                <NavLink
-                  to="/about-us"
-                  className="hover:text-blue-500 transition duration-300 px-2"
-                >
-                  About Us
-                </NavLink>
-
-                <NavLink
-                  to="/contact-us"
-                  className="hover:text-blue-500 transition duration-300 px-2"
-                >
-                  Contact Us
-                </NavLink>
-
-                <NavLink
-                  to="/login"
-                  className="hover:text-blue-500 transition duration-300 px-2"
-                >
-                  LogIn
-                </NavLink>
-              </>
+      {/* Mobile Menu (Dropdown) */}
+      <div
+        className={`fixed top-16 right-0 w-52 bg-blue shadow-lg transition-all duration-300 transform ${mobileMenuOpen ? "translate-x-0 opacity-100" : "translate-x-full opacity-0"
+          } sm:hidden flex flex-col gap-4 p-5`}
+      >
+        {user?.role === "Admin" ? (
+          <div className="text-center">
+            <p>Welcome, Admin</p>
+            {profileMenu()}
+          </div>
+        ) : (
+          <div className="flex flex-col gap-4 text-center">
+            {navLinks.map(
+              (link) =>
+                (user ? link.auth : !link.auth) && (
+                  <NavLink
+                    key={link.to}
+                    to={link.to}
+                    className="hover:text-blue-300 transition duration-300"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {link.label}
+                  </NavLink>
+                )
             )}
-          </ul>
-          )
-      }
-    </div>
-  )
-}
-// 
-// 
+            {user && profileMenu()}
+          </div>
+        )}
+      </div>
 
-export default Navbar
+      {/* Desktop Menu */}
+      <div className="hidden sm:flex gap-5 items-center text-lg">
+        {user?.role === "Admin" ? (
+          <div className="flex gap-2 items-center">
+            <p>Welcome, Admin</p>
+            {profileMenu()}
+          </div>
+        ) : (
+          <div className="flex gap-2 items-center justify-center">
+            {navLinks.map(
+              (link) =>
+                (user ? link.auth : !link.auth) && (
+                  <NavLink
+                  key={link.to}
+                  to={link.to}
+                  className={({ isActive }) =>
+                    `hover:text-blue-400 transition duration-300 px-2 ${ isActive && "border-b-2 border-blue-600 font-semibold" }`
+                  }
+                >
+                  {link.label}
+                </NavLink>
+                
+                )
+            )}
+            {user && profileMenu()}
+          </div>
+        )}
+      </div>
+    </nav>
+  );
+};
+
+export default Navbar;

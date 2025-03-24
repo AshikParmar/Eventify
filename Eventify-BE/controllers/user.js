@@ -9,7 +9,7 @@ dotenv.config();
 export const signUp = async (req, res) => {
   try {
 
-    const { username, email, password, role } = req.body;
+    const { username, email, password } = req.body;
 
     if (!username || !email || !password)
       return res.status(400).json({
@@ -26,15 +26,24 @@ export const signUp = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+
     const user = await User.create({
       username,
       email,
-      password: hashedPassword,
-      role
+      password: hashedPassword
     });
 
+    const createdUser = await User.findById(user._id).select("-password");
+
+    if (!createdUser) {
+      return res.status(500).json({
+        success: false,
+        message: "Something went wrong while registering the user"
+      })
+    }
+
     return res.status(201).json({
-      user,
+      user: createdUser,
       success: true,
       message: "Account Created"
     })
@@ -88,7 +97,7 @@ export const signIn = async (req, res) => {
 // Get All Users
 export const getUsers = async (req, res) => {
   try {
-    const Users = await (await User.find()).filter(user => user.role === "User");
+    const Users = await ( User.find()).filter(user => user.role === "User");
     if (Users.length === 0) {
       return res.status(404).json({ success: false, message: "No Users found" });
     }

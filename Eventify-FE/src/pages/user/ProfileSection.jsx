@@ -1,13 +1,16 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { logout } from "../../redux/slices/userSlice";
 import { useGlobalUI } from "../../components/Global/GlobalUIContext";
 import { changePassword, updateUser } from "../../redux/slices/userSlice";
 import Loading from "../../components/ui/Loading";
-// import { updateUser } from "../redux/userSlice"; // Ensure you have this action in your Redux slice
+import Button from "../../components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 const ProfileSection = () => {
-  const { showSnackbar } = useGlobalUI();
+  const { showSnackbar, showDialog } = useGlobalUI();
   const { user, loading, error } = useSelector((state) => state.user);
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const formattedDate = new Date(user?.createdAt).toLocaleDateString("en-US", {
@@ -27,6 +30,18 @@ const ProfileSection = () => {
     oldPassword: "",
     newPassword: ""
   });
+
+  const handleLogout = async () => {
+    showDialog("Confirm Logout", "Are you sure you want to Logout?", async () => {
+      try {
+        await dispatch(logout());
+        navigate("/login");
+        showSnackbar("Logout successfully!", "success");
+      } catch (error) {
+        showSnackbar(error.message || "Failed to Logout.", "error");
+      }
+    });
+  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -53,7 +68,7 @@ const ProfileSection = () => {
       setEditMode(false);
       setPassDetails({
         username: "",
-        email:  ""
+        email: ""
       });
     }
 
@@ -88,39 +103,47 @@ const ProfileSection = () => {
   return (
     <div >
       <section className="mb-6">
-        <h2 className="text-xl font-semibold mb-4">Profile Information</h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-semibold ">Profile Information</h2>
+          <Button 
+          className={"bg-red-600 text-white hover:bg-red-700"}
+          onClick={handleLogout}
+          >Logout
+          </Button>
+        </div>
+
         {editMode ? (
-          loading ? 
-          (
-            <Loading title="Updating..."/>
-          ) 
-          :
-          (<form onSubmit={handleFormSubmit} className="space-y-4">
-            <label className="text-gray-700 font-medium">Name</label>
-            <input
-              type="text"
-              name="username"
-              value={formData.username}
-              onChange={handleChange}
-              className="w-full p-2 border rounded"
-              required
-            />
-            <label className="text-gray-700 font-medium">Email</label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className="w-full p-2 border rounded"
-              required
-            />
-            <button type="submit" className="bg-blue-500 text-white p-2 rounded">
-              Save Changes
-            </button>
-            <button onClick={() => setEditMode(false)} className="bg-gray-600 text-white p-2 rounded ml-4">
-              Cancel
-            </button>
-          </form>)
+          loading ?
+            (
+              <Loading title="Updating..." />
+            )
+            :
+            (<form onSubmit={handleFormSubmit} className="space-y-4">
+              <label className="text-gray-700 font-medium">Name</label>
+              <input
+                type="text"
+                name="username"
+                value={formData.username}
+                onChange={handleChange}
+                className="w-full p-2 border rounded"
+                required
+              />
+              <label className="text-gray-700 font-medium">Email</label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                className="w-full p-2 border rounded"
+                required
+              />
+              <button type="submit" className="bg-blue-500 text-white p-2 rounded">
+                Save Changes
+              </button>
+              <button onClick={() => setEditMode(false)} className="bg-gray-600 text-white p-2 rounded ml-4">
+                Cancel
+              </button>
+            </form>)
         ) : (
           <div>
             <p><strong>Name:</strong> {user?.username || "N/A"}</p>
@@ -176,8 +199,8 @@ const ProfileSection = () => {
                 Change Passsword
               </button>
               <button onClick={() => SetEditPassword(false)} className="bg-gray-600 text-white p-2 rounded ml-4">
-              Cancel
-            </button>
+                Cancel
+              </button>
             </form>
           </section>
         )
