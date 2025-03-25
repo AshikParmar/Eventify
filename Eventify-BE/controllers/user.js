@@ -9,8 +9,10 @@ dotenv.config();
 export const signUp = async (req, res) => {
   try {
 
-    const { username, email, password } = req.body;
+    const { username, password } = req.body;
+    let { email } = req.body;
 
+    email = email.toLowerCase();
     if (!username || !email || !password)
       return res.status(400).json({
         success: false,
@@ -56,7 +58,10 @@ export const signUp = async (req, res) => {
 // Login 
 export const signIn = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { password } = req.body;
+    let { email } = req.body;
+
+    email = email.toLowerCase();
     const user = await User.findOne({
       email: email,
     });
@@ -97,7 +102,7 @@ export const signIn = async (req, res) => {
 // Get All Users
 export const getUsers = async (req, res) => {
   try {
-    const Users = await ( User.find()).filter(user => user.role === "User");
+    const Users = ( await User.find()).filter(user => user.role === "User");
     if (Users.length === 0) {
       return res.status(404).json({ success: false, message: "No Users found" });
     }

@@ -9,6 +9,8 @@ import Loading from "../../components/ui/Loading";
 const LoginPage = () => {
   const [loading, setLoading] = useState(false);
   const { showSnackbar } = useGlobalUI();
+
+  const [emailError, setEmailError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [input, setInput] = useState({
     email: "",
@@ -19,7 +21,17 @@ const LoginPage = () => {
   const navigate = useNavigate();
 
   const changeEventHandler = (e) => {
-    setInput({ ...input, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    if (name === "email") {
+      if (value !== value.toLowerCase()) {
+        setEmailError("Email must be in lowercase!");
+      } else {
+        setEmailError("");
+      }
+    }
+
+    setInput({ ...input, [name]: value });
   };
   
   const handleSubmit = async (e) => {
@@ -30,6 +42,11 @@ const LoginPage = () => {
       return;
     }
     
+    if (emailError) {
+      showSnackbar(emailError, "error");
+      return;
+    }
+
     try{ 
       setLoading(true);
       const res = await dispatch(loginUser(input));
@@ -115,6 +132,7 @@ if(loading){
                             />
                             <i className="bx bx-envelope text-gray-700 text-xl mr-3"></i>  
                         </div>
+                        {emailError && <p className="text-red-500 text-xs">*{emailError}</p>}
                     </div>
                     <div className="flex flex-col space-y-2">
                         <label htmlFor="password" className="text-sm font-semibold text-gray-700">Password</label>
