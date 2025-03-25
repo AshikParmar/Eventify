@@ -16,6 +16,7 @@ const SignupPage = () => {
   });
 
   const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -31,6 +32,10 @@ const SignupPage = () => {
       }
     }
 
+    if (name === "password") {
+      setPasswordError("");
+    }
+
     setInput({ ...input, [name]: value });
   };
 
@@ -42,7 +47,13 @@ const SignupPage = () => {
     }
 
     if (emailError) {
-      showSnackbar(emailError, "error");
+      showSnackbar("Invalid Email!", "error");
+      return;
+    }
+
+    if (input.password.length < 4) {
+      setPasswordError("Password must be at least 4 characters long.");
+      showSnackbar("Invalid Password!", "error");
       return;
     }
 
@@ -160,6 +171,7 @@ const SignupPage = () => {
                     : <i className="bx bx-lock text-gray-700 text-xl"></i>}
                 </button>
               </div>
+              {passwordError && <p className="text-red-500 text-xs">* {passwordError}</p>}
             </div>
             <div className="my-4">
               <button type="submit" className="w-full px-4 py-2 text-lg font-semibold text-white bg-blue-500 rounded hover:bg-blue-600">

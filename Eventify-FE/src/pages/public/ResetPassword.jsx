@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react"; 
 import { useGlobalUI } from "../../components/Global/GlobalUIContext";
+import { requestResetPassword } from "../../redux/services/forgotPassword";
 
 const ResetPassword = () => {
 
