@@ -8,6 +8,13 @@ export const forgotPassword = async (req, res) => {
     try {
         const { email } = req.body;
 
+        if (email !== email.toLowerCase()) {
+            return res.status(400).json({
+              success: false,
+              message: "Invalid Email!"
+            })
+          }
+
         const user = await User.findOne({ email:email });
 
         if (!user) {
@@ -32,6 +39,14 @@ export const forgotPassword = async (req, res) => {
 export const resetPassword = async (req, res) => {
     const { token } = req.params;
     const { password } = req.body;
+
+    
+    if (password.length < 4) {
+        return res.status(400).json({
+          success: false,
+          message: "Password must be at least 4 characters long."
+        })
+      }
 
     try {
         const decoded = jwt.verify(token, process.env.FORGET_SECRET_KEY);

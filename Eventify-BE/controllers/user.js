@@ -9,21 +9,33 @@ dotenv.config();
 export const signUp = async (req, res) => {
   try {
 
-    const { username, password } = req.body;
-    let { email } = req.body;
+    const { username, email, password } = req.body;
 
-    email = email.toLowerCase();
     if (!username || !email || !password)
       return res.status(400).json({
         success: false,
-        message: "All fields are required"
+        message: "All fields are required!"
       })
+
+      if (email !== email.toLowerCase()) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid Email!"
+        })
+      }
 
     const isExist = await User.findOne({ email: email })
     if (isExist) {
       return res.status(400).json({
         success: false,
         message: "Email is already exist"
+      })
+    }
+
+    if (password.length < 4) {
+      return res.status(400).json({
+        success: false,
+        message: "Password must be at least 4 characters long."
       })
     }
 
@@ -58,10 +70,8 @@ export const signUp = async (req, res) => {
 // Login 
 export const signIn = async (req, res) => {
   try {
-    const { password } = req.body;
-    let { email } = req.body;
-
-    email = email.toLowerCase();
+    const { email, password } = req.body;
+ 
     const user = await User.findOne({
       email: email,
     });
@@ -149,6 +159,13 @@ export const changePassword = async (req, res) => {
       return res.status(400).json({ message: "Old password is incorrect", success: false });
     }
 
+    if (newPassword.length < 4) {
+      return res.status(400).json({
+        success: false,
+        message: "Password must be at least 4 characters long."
+      })
+    }
+
     // Hash the new password before saving
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
@@ -175,6 +192,13 @@ export const updateUser = async (req, res) => {
     // const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ message: "User not found", success: false });
+    }
+
+    if (email !== email.toLowerCase()) {
+      return res.status(400).json({
+        success: false,
+        message: "Email must be in lowercase!"
+      })
     }
 
     // Update user details
