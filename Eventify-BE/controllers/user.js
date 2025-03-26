@@ -1,9 +1,43 @@
 import User from "../models/user.js";
 import bcrypt from "bcrypt";
 import { generateTokens } from "../utils/generateToken.js";
-import dotenv from "dotenv"
-dotenv.config();
 
+
+export const googleLogin = async (req, res) => {
+  try {
+    const { email, name, googleId } = req.body;
+
+    let user = await User.findOne({ email });
+
+    if (user && user.password && (!user.googleId || user.googleId !== googleId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Use email login."
+      });
+    }
+    if (!user) {
+      user = new User({
+        googleId,
+        username: name,
+        email,
+      });
+      await user.save();
+    }
+
+    const { accessToken, refreshToken, accessTokenExpiry, refreshTokenExpiry } =
+      await generateTokens(email, user?._id, user?.role);
+
+    return res.status(200).json({
+      success: true,
+      user,
+      accessToken,
+    });
+
+  } catch (error) {
+    console.error("Google Login Error:", error);
+    res.status(500).json({ success: false, message: "Server Error" });
+  }
+};
 
 // Signup
 export const signUp = async (req, res) => {
@@ -17,12 +51,12 @@ export const signUp = async (req, res) => {
         message: "All fields are required!"
       })
 
-      if (email !== email.toLowerCase()) {
-        return res.status(400).json({
-          success: false,
-          message: "Invalid Email!"
-        })
-      }
+    if (email !== email.toLowerCase()) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Email!"
+      })
+    }
 
     const isExist = await User.findOne({ email: email })
     if (isExist) {
@@ -67,11 +101,12 @@ export const signUp = async (req, res) => {
   }
 }
 
+
 // Login 
 export const signIn = async (req, res) => {
   try {
     const { email, password } = req.body;
- 
+
     const user = await User.findOne({
       email: email,
     });
@@ -81,6 +116,13 @@ export const signIn = async (req, res) => {
         status: -1,
         message: "You have to register",
         success: false,
+      });
+    }
+
+    if (!user.password) {
+      return res.status(400).json({
+        success: false,
+        message: "Account registered via Google. Please sign in with Google."
       });
     }
 
@@ -112,7 +154,7 @@ export const signIn = async (req, res) => {
 // Get All Users
 export const getUsers = async (req, res) => {
   try {
-    const Users = ( await User.find()).filter(user => user.role === "User");
+    const Users = (await User.find()).filter(user => user.role === "User");
     if (Users.length === 0) {
       return res.status(404).json({ success: false, message: "No Users found" });
     }
@@ -148,7 +190,7 @@ export const changePassword = async (req, res) => {
 
     // Find the user by ID
     // const user = await User.findById(userId);
-    
+
     if (!user) {
       return res.status(404).json({ message: "User not found", success: false });
     }
@@ -206,7 +248,7 @@ export const updateUser = async (req, res) => {
     user.email = email || user.email;
     await user.save();
 
-    res.status(200).json({ message: "User updated successfully",  success: true, user });
+    res.status(200).json({ message: "User updated successfully", success: true, user });
   } catch (error) {
     res.status(500).json({ message: error.message || "Internal Server Error", success: false });
   }

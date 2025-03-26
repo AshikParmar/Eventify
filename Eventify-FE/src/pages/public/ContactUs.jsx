@@ -45,12 +45,12 @@ const ContactUs = () => {
     };
 
     return (
-        <div className='bg-gray-50 p-8'>
+        <div className='bg-gray-100 p-8 min-h-screen'>
             <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
                 <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">Get in Touch</h1>
                 <p className="text-gray-700 text-center mb-6">At Eventify, we value our users and strive to create the best experience possible. Your feedback helps us improve and bring new features to our platform.</p>
 
-                <form onSubmit={handleSubmit} className="space-y-4 bg-gray-50 p-6 rounded-lg shadow-md">
+                <form onSubmit={handleSubmit} className="space-y-4 bg-blue-50 p-6 rounded-lg shadow-md">
                     <input 
                         type="text"
                         name="name"

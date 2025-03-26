@@ -3,6 +3,11 @@
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
+    googleId:{ 
+        type: String, 
+        unique: true, 
+        sparse: true 
+    },
     username:{
         type:String,
         required:true
@@ -13,8 +18,7 @@ const userSchema = new mongoose.Schema({
         unique: true 
     },
     password:{
-        type:String,
-        required:true
+        type:String
     },
     role:{
         type:String,

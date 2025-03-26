@@ -7,6 +7,26 @@ const API_URL = `${import.meta.env.VITE_BASE_URL}/user`;
 const storedUser = JSON.parse(localStorage.getItem("user")) || null;
 const token = localStorage.getItem("token") || null;
 
+
+// Google Login Action
+export const googleLoginUser = createAsyncThunk(
+  "googleLogin",
+  async (googleData, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(`${API_URL}/google-login`, googleData);
+      const { user, accessToken } = response.data;
+
+      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("token", accessToken);
+
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || "Google login failed");
+    }
+  }
+);
+
+
 // Signup Action
 export const signupUser = createAsyncThunk(
   "signup",
@@ -26,10 +46,6 @@ export const loginUser = createAsyncThunk(
   async (credentials, { rejectWithValue }) => {
     try {
       const response = await axios.post(`${API_URL}/signin`, credentials);
-
-      // console.log('Full response:', response);
-      // console.log('Response data:', response.data);
-
 
       const { user, accessToken } = response.data;
       // console.log('User:', user);
@@ -107,6 +123,23 @@ const userSlice = createSlice({
 
   extraReducers: (builder) => {
     builder
+      // Google Login
+      .addCase(googleLoginUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(googleLoginUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload.user;
+        state.token = action.payload.accessToken;
+        state.isAuthenticated = true;
+      })
+      .addCase(googleLoginUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      
       //Signup user
       .addCase(signupUser.pending, (state) => {
         state.loading = true;
