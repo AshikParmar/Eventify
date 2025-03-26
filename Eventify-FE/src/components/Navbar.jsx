@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
+import logo from "../assets/Eventify-logo03.png"
 import { useSelector } from "react-redux";
 import { Menu as MenuIcon, X as CloseIcon } from "lucide-react";
 
@@ -56,7 +57,7 @@ const Navbar = () => {
     <nav className="bg-blue sticky top-0 w-full z-50 flex items-center justify-between py-4 px-6 sm:px-10 text-white border-b-2 border-gray-800">
       {/* Logo */}
       <Link to="/" className="text-2xl font-bold">
-        Eventify
+        <img src={logo} alt="logo" className="h-10"/>
       </Link>
 
       {/* Burger Menu Button */}

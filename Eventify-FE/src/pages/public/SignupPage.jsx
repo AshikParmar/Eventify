@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { signupUser } from "../../redux/slices/userSlice";
 import { useGlobalUI } from "../../components/Global/GlobalUIContext";
 import Loading from "../../components/ui/Loading";
+import GoogleAuthButton from "../../components/ui/GoogleAuthButton";
 
 
 const SignupPage = () => {
@@ -62,7 +63,6 @@ const SignupPage = () => {
       const res = await dispatch(signupUser(input));
 
       if (res.payload.success) {
-
         showSnackbar(res.payload.message, "success");
         setInput({
           username: "",
@@ -173,28 +173,20 @@ const SignupPage = () => {
               </div>
               {passwordError && <p className="text-red-500 text-xs">* {passwordError}</p>}
             </div>
-            <div className="my-4">
-              <button type="submit" className="w-full px-4 py-2 text-lg font-semibold text-white bg-blue-500 rounded hover:bg-blue-600">
+            <div className="">
+              <button type="submit" className="w-full px-4 py-2 text-lg font-semibold text-white bg-blue-500 rounded hover:bg-blue-600 cursor-pointer">
                 Sign Up
               </button>
             </div>
           </form>
-          {/* <div className="mt-5 flex flex-col space-y-5">
-                    <span className="flex items-center justify-center space-x-2">
-                        <span className="h-px bg-gray-400 w-14"></span>
-                        <span className="font-normal text-gray-500">or login with</span>
-                        <span className="h-px bg-gray-400 w-14"></span>
-                    </span>
-                    <div className="flex justify-center space-x-6">
-                    <a href="#" className="">
-                        <img src="https://cdn-icons-png.flaticon.com/512/300/300221.png" alt="Google" className="w-8 h-8" />
-                    </a>
-                    <a href="#" className="">
-                        <img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" alt="GitHub" className="w-8 h-8" />
-                    </a>
-                    
-                    </div>
-                </div> */}
+          <div className="mt-5 flex flex-col space-y-5">
+            <div className="flex items-center justify-center space-x-2">
+              <span className="h-px bg-gray-400 w-28"></span>
+              <span className="font-semibold text-gray-600">or</span>
+              <span className="h-px bg-gray-400 w-28"></span>
+            </div>
+            <GoogleAuthButton setLoading={setLoading} />
+          </div>
         </div>
       </div>
     </div>

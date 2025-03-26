@@ -1,8 +1,7 @@
 import express from "express";
-import { changePassword, getUserById, getUsers, signIn, signUp, updateUser } from "../controllers/user.js";
+import { changePassword, getUserById, getUsers, signIn, signUp, updateUser, googleLogin } from "../controllers/user.js";
 import { auth } from "../middleware/auth.middleware.js";
 import { getUserTickets } from "../controllers/ticket.js";
-
 
 const router = express.Router();
 
@@ -15,5 +14,6 @@ router.put('/update-user', auth(["Admin","User"]), updateUser);
 
 router.get("/tickets", auth(["User"]), getUserTickets)
 
+router.post("/google-login", googleLogin);
 
 export default router;
