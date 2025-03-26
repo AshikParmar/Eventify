@@ -40,7 +40,7 @@ const GoogleAuthButton = ({ setLoading }) => {
   };
 
   return (
-    <div>
+    <div className="justify-items-center">
       <GoogleLogin
         onSuccess={handleGoogleSuccess}
         onError={handleGoogleFailure}
