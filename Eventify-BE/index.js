@@ -18,6 +18,8 @@ app.use(cors({
     credentials: true 
 }));
 
+app.set('view engine', 'ejs');
+
 connectDB();
 // eventStatusUpdate();
 

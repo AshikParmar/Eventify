@@ -178,7 +178,7 @@ const CreateEvent = () => {
                         <input
                             type="date"
                             name="date"
-                            // min={new Date().toISOString().split("T")[0]}
+                            min={new Date().toISOString().split("T")[0]}
                             className="bg-gray-300 p-2 rounded-sm"
                             onChange={handleChange}
                             required

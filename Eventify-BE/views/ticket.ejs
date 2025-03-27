@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Ticket</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .ticket {
+            width: 350px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            perspective: 1000px;
+            transition: transform 0.5s;
+        }
+
+        .ticket:hover {
+            transform: scale(1.05) rotateY(10deg);
+        }
+
+        .header {
+            background: linear-gradient(to right, #3c1cb0 0%, #2269e3 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            position: relative;
+        }
+
+        .header .logo {
+            max-width: 200px;
+            max-height: 100px;
+            object-fit: contain;
+        }
+
+        .ticket-details {
+            padding: 25px;
+        }
+
+        .ticket-details h2 {
+            color: #2575fc;
+            border-bottom: 2px solid #1401a6;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .detail {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
+        }
+
+        .detail-label {
+            color: #1401a6;
+            font-weight: 600;
+        }
+
+        .detail-value {
+            color: #333;
+            text-align: right;
+        }
+
+        .footer {
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 10px;
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="ticket">
+        <div class="header">
+            <img src="https://res.cloudinary.com/da69lln2a/image/upload/v1743072887/Eventify-logo03_u1lgln.png" alt="Event Logo" class="logo">
+        </div>
+        
+        <div class="ticket-details">
+            <h2><%= ticket.eventName %></h2>
+            
+            <div class="detail">
+                <span class="detail-label">Event Type</span>
+                <span class="detail-value"><%= ticket.event.type %></span>
+            </div>
+
+            <div class="detail">
+                <span class="detail-label">Venue</span>
+                <span class="detail-value"><%= ticket.event.venue %></span>
+            </div>
+            
+            <div class="detail">
+                <span class="detail-label">Name</span>
+                <span class="detail-value"><%= ticket.name %></span>
+            </div>
+            
+            <div class="detail">
+                <span class="detail-label">Email</span>
+                <span class="detail-value"><%= ticket.email %></span>
+            </div>
+            
+            <div class="detail">
+                <span class="detail-label">Date</span>
+                <span class="detail-value"><%= new Date(ticket.eventDate).toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' }) %></span>
+            </div>
+            
+            <div class="detail">
+                <span class="detail-label">Start Time</span>
+                <span class="detail-value"><%= ticket.eventStartTime %></span>
+            </div>
+            
+            <div class="detail">
+                <span class="detail-label">Tickets</span>
+                <span class="detail-value"><%= ticket.numberOfTickets %></span>
+            </div>
+            
+            <div class="detail">
+                <span class="detail-label">Total Price</span>
+                <span class="detail-value">Rs. <%= ticket.totalPrice %></span>
+            </div>
+        </div>
+        
+        <div class="footer">
+            © <%= new Date().getFullYear() %> Eventify. All Rights Reserved.
+        </div>
+    </div>
+</body>
+</html>
