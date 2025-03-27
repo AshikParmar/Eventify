@@ -8,7 +8,7 @@ export const createEvent = async (req, res) => {
     try {
         const { title, type, venue, date, endDate, startTime, endTime, isSingleDay, price, totalSlots } = req.body;
 
-        if (!title || !type || !venue || !date || !isSingleDay || !startTime || !endTime || !totalSlots) {
+        if (!title || !type || !venue || !date || !startTime || !endTime || !totalSlots) {
             return res.status(400).json({ success: false, message: "All fields are required" });
         }
         let imageUrl;

@@ -1,25 +1,31 @@
-import QRCode from "qrcode";
+import mongoose from "mongoose";
 import Ticket from "../models/ticket.js";
+import { generateQRCode } from "../utils/generateQrcode.js";
+
+const BASE_URL = process.env.BASE_URL;
 
 export const createTicket = async (user, event, numberOfTickets, totalPrice) => {
   try {
-    const qrData = `Event_Id: ${event._id}\n\n Event: ${event.title}\n\nName: ${user.username}\n\nTickets: ${numberOfTickets}`;
-    const qrCode = await QRCode.toDataURL(qrData);
 
     const newTicket = await Ticket.create({
       participant: user._id,
       event: event._id,
-      name: user.username, 
-      email: user.email, 
+      name: user.username,
+      email: user.email,
       eventName: event.title,
       eventDate: event.date,
       eventStartTime: event.startTime,
       numberOfTickets,
       totalPrice,
-      qr: qrCode,
+      qr: "",
     });
 
+    const qrData = `${BASE_URL}/user/ticket/${newTicket._id}`;
+    const qrCode = await generateQRCode(qrData);
+
+    newTicket.qr = qrCode;
     await newTicket.save();
+
     return newTicket;
   } catch (error) {
     console.error("Error creating ticket:", error);
@@ -29,15 +35,38 @@ export const createTicket = async (user, event, numberOfTickets, totalPrice) => 
 
 
 export const getUserTickets = async (req, res) => {
-    try {
-        const user = req.user;
+  try {
+    const user = req.user;
 
-        // Find all tickets and populate event details
-        const tickets = await Ticket.find({ _id: { $in: user.myTickets } }).populate("event participant").sort({createdAt:- 1});
+    // Find all tickets and populate event details
+    const tickets = await Ticket.find({ _id: { $in: user.myTickets } }).populate("event participant").sort({ createdAt: - 1 });
 
-        res.status(200).json({ tickets });
-    } catch (error) {
-        res.status(500).json({ message: "Server error", error });
-    }
+    res.status(200).json({ tickets });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
+  }
 };
+
+
+export const getTicket = async (req, res) => {
+  try {
+    const ticketId = req.params.ticketId;
+
+    if (!mongoose.Types.ObjectId.isValid(ticketId)) {
+      console.log("Received Invalid ticketId:", req.params.ticketId);
+      return res.status(400).send("Invalid Ticket ID");
+    }
+
+    const ticket = await Ticket.findById(ticketId).populate("participant event");
+
+    if (!ticket) {
+      return res.status(404).send("Ticket not found");
+    }
+
+    res.render("ticket", { ticket });
+  } catch (error) {
+    console.error("Error fetching ticket:", error);
+    res.status(500).send("Internal Server Error");
+  }
+}
 
