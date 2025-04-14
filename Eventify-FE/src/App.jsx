@@ -27,12 +27,14 @@ import ForgotPassword from "./pages/public/ForgotPassword";
 import ResetPassword from "./pages/public/ResetPassword";
 import CalendarPage from "./pages/public/CalendarPage";
 import ViewUserPage from "./components/admin/ViewUser";
+import ScrollToTop from "./components/Global/ScrollToTop";
 
 function App() {
   const user = useSelector(state => state.user.user);
 
   return (
     <Router>
+       <ScrollToTop />  
       {user?.role === "Admin" ? (
         <div className="flex">
           <Sidebar />

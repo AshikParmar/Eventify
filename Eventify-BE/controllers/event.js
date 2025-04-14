@@ -1,6 +1,7 @@
 // eventController.js
 import Event from "../models/event.js";
 import { uploadToCloudinary } from "../services/cloudinary.js";
+import { sendEventConfirmation } from "../services/emailService.js";
 import { createTicket } from "./ticket.js";
 
 // Create Event
@@ -139,13 +140,16 @@ export const deleteEvent = async (req, res) => {
 export const joinEvent = async (req, res) => {
     try {
         const user = req.user;
-        const { eventId, userId , numberOfTickets, totalPrice } = req.body;
+        const { eventId, userId, numberOfTickets, totalPrice } = req.body;
+        
         if (!eventId) {
             return res.status(400).json({ success: false, message: "Event ID is required" });
         }
+        
         if (!eventId.match(/^[0-9a-fA-F]{24}$/)) {
             return res.status(400).json({ success: false, message: "Invalid Event ID" });
         }
+        
         const event = await Event.findById(eventId);
 
         if (!event) return res.status(404).json({ success: false, message: "Event not found" });
@@ -168,6 +172,8 @@ export const joinEvent = async (req, res) => {
         user.myTickets.push(newTicket._id);
         await user.save();
 
+        // Send confirmation email
+        sendEventConfirmation(user, event, newTicket, numberOfTickets, totalPrice);
 
         res.status(200).json({
           success: true,
