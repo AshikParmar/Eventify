@@ -14,14 +14,14 @@ export const createEvent = async (req, res) => {
         }
         let imageUrl;
         if (req.file) {
-          if (!req.file.mimetype.startsWith("image/")) {
-            return res.status(400).json({
-              success: false,
-              message: "The uploaded file must be an image",
-            });
-          }
-    
-          imageUrl = await uploadToCloudinary(req.file);
+            if (!req.file.mimetype.startsWith("image/")) {
+                return res.status(400).json({
+                    success: false,
+                    message: "The uploaded file must be an image",
+                });
+            }
+
+            imageUrl = await uploadToCloudinary(req.file);
         }
 
         const userId = req.userId
@@ -29,15 +29,16 @@ export const createEvent = async (req, res) => {
         const eventPrice = price || "Free";
         const eventEndDate = isSingleDay ? date : endDate;
 
-        const event = new Event({ ...req.body,
-            endDate: eventEndDate, 
+        const event = new Event({
+            ...req.body,
+            endDate: eventEndDate,
             availableSlots: totalSlots,
-            price:eventPrice , 
-            organizer: userId, 
-            image: imageUrl 
+            price: eventPrice,
+            organizer: userId,
+            image: imageUrl
         });
         await event.save();
-        res.status(201).json({ success: true,  message: "Event created successfully", data: event });
+        res.status(201).json({ success: true, message: "Event created successfully", data: event });
     } catch (error) {
         res.status(400).json({ success: false, message: error.message });
     }
@@ -46,7 +47,7 @@ export const createEvent = async (req, res) => {
 // Get All Events
 export const getEvents = async (req, res) => {
     try {
-        const events = await Event.find().populate("organizer participants").sort({createdAt:- 1});
+        const events = await Event.find().populate("organizer participants").sort({ createdAt: - 1 });
         if (events.length === 0) {
             return res.status(404).json({ success: false, message: "No events found" });
         }
@@ -57,7 +58,7 @@ export const getEvents = async (req, res) => {
             const eventTimestamp = new Date(event.date).getTime();
             return eventTimestamp >= currDate && event.status === "Pending";
         });
-        res.status(200).json({ success: true, data: { events, pendingEvents} });
+        res.status(200).json({ success: true, data: { events, pendingEvents } });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
@@ -95,11 +96,11 @@ export const updateEvent = async (req, res) => {
         }
 
         // Extract fields to update
-        const { title, type, venue, date, isSingleDay, endDate, startTime, endTime, totalSlots, availableSlots , price , description } = req.body;
+        const { title, type, venue, date, isSingleDay, endDate, startTime, endTime, totalSlots, availableSlots, price, description } = req.body;
         const eventPrice = price || "Free";
         const eventEndDate = isSingleDay ? date : endDate;
 
-        let updatedFields = { title, type, venue, date, endDate:eventEndDate, startTime, endTime, totalSlots,availableSlots , price:eventPrice, description };
+        let updatedFields = { title, type, venue, date, endDate: eventEndDate, startTime, endTime, totalSlots, availableSlots, price: eventPrice, description };
 
         // Handle Image Upload if a new image is provided
         if (req.file) {
@@ -141,15 +142,15 @@ export const joinEvent = async (req, res) => {
     try {
         const user = req.user;
         const { eventId, userId, numberOfTickets, totalPrice } = req.body;
-        
+
         if (!eventId) {
             return res.status(400).json({ success: false, message: "Event ID is required" });
         }
-        
+
         if (!eventId.match(/^[0-9a-fA-F]{24}$/)) {
             return res.status(400).json({ success: false, message: "Invalid Event ID" });
         }
-        
+
         const event = await Event.findById(eventId);
 
         if (!event) return res.status(404).json({ success: false, message: "Event not found" });
@@ -173,12 +174,13 @@ export const joinEvent = async (req, res) => {
         await user.save();
 
         // Send confirmation email
-        sendEventConfirmation(user, event, newTicket, numberOfTickets, totalPrice);
+        sendEventConfirmation(user, event, newTicket, numberOfTickets, totalPrice)
+            .catch(err => console.error("Failed to send confirmation email:", err));
 
         res.status(200).json({
-          success: true,
-          message: "User joined the event successfully",
-          ticket: newTicket
+            success: true,
+            message: "User joined the event successfully",
+            ticket: newTicket
         });
 
     } catch (error) {
