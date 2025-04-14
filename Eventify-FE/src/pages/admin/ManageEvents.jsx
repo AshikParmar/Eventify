@@ -29,7 +29,7 @@ const ManageEvents = () => {
 
   // Filter events based on search, filter, and date range
   const filteredEvents = events.filter((event) => {
-    const matchesSearch = event?.type?.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = event?.title?.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesFilter = filterValue ? event[filterProperty] === filterValue : true;
 
     const eventDate = new Date(event.date).getTime();
@@ -39,7 +39,7 @@ const ManageEvents = () => {
     const matchesDateRange =
       (!start || eventDate >= start) && (!end || eventDate <= end);
 
-    return matchesSearch && matchesFilter && matchesDateRange;
+    return matchesSearch && matchesFilter && matchesDateRange; 
   });
 
   // Delete row handler

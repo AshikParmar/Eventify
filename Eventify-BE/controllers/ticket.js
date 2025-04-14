@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import Ticket from "../models/ticket.js";
 import { generateQRCode } from "../utils/generateQrcode.js";
 
-const BASE_URL = process.env.BASE_URL;
+const QRCODE_URL = process.env.QRCODE_URL;
 
 export const createTicket = async (user, event, numberOfTickets, totalPrice) => {
   try {
@@ -20,7 +20,7 @@ export const createTicket = async (user, event, numberOfTickets, totalPrice) => 
       qr: "",
     });
 
-    const qrData = `${BASE_URL}/user/ticket/${newTicket._id}`;
+    const qrData = `${QRCODE_URL}/user/ticket/${newTicket._id}`;
     const qrCode = await generateQRCode(qrData);
 
     newTicket.qr = qrCode;

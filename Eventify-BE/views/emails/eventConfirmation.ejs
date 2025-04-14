@@ -1,0 +1,146 @@
+<!-- views/emails/eventConfirmation.ejs -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Registration Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 25px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .logo {
+            max-width: 150px;
+            margin-bottom: 15px;
+        }
+        h1 {
+            color: #2c3e50;
+            margin: 0;
+            font-size: 24px;
+        }
+        .event-details {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .event-title {
+            font-size: 20px;
+            color: #3498db;
+            margin-bottom: 10px;
+        }
+        .detail-row {
+            display: flex;
+            margin-bottom: 10px;
+        }
+        .detail-label {
+            width: 140px;
+            font-weight: bold;
+        }
+        .ticket-info {
+            background-color: #e8f4fc;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+        .button {
+            display: inline-block;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="https://res.cloudinary.com/da69lln2a/image/upload/v1743072887/Eventify-logo03_u1lgln.png" alt="Eventify Logo" class="logo">
+            <h1>Event Registration Confirmation</h1>
+        </div>
+
+        <p>Hello <%= user.username %>,</p>
+        
+        <p>Great news! Your registration for the following event has been confirmed:</p>
+        
+        <div class="event-details">
+            <div class="event-title"><%= event.title %></div>
+            
+            <div class="detail-row">
+                <div class="detail-label">Date:</div>
+                <div><%= new Date(event.date).toLocaleDateString() %></div>
+            </div>
+            
+            <% if (event.startTime) { %>
+                <div>
+                    <% 
+                        const [hours, minutes] = event.startTime.split(':');
+                        let hour = parseInt(hours, 10);
+                        const ampm = hour >= 12 ? 'PM' : 'AM';
+                        hour = hour % 12;
+                        hour = hour ? hour : 12; // Convert '0' to '12'
+                        const formattedTime = `${hour}:${minutes} ${ampm}`;
+                    %>
+                    <%= formattedTime %>
+                </div>
+            <% } %>
+            
+            <% if (event.venue) { %>
+            <div class="detail-row">
+                <div class="detail-label">Venue:</div>
+                <div><%= event.venue %></div>
+            </div>
+            <% } %>
+        </div>
+        
+        <div class="ticket-info">
+            <h3>Ticket Information</h3>
+            <div class="detail-row">
+                <div class="detail-label">Number of Tickets:</div>
+                <div><%= numberOfTickets %></div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Total Amount:</div>
+                <div>Rs. <%= totalPrice.toFixed(2) %></div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Ticket ID:</div>
+                <div><%= ticketId %></div>
+            </div>
+        </div>
+        
+        <p>You can view your ticket details in your account dashboard.</p>
+        
+        <div style="text-align: center;">
+            <a href="<%= dashboardLink %>" class="button">View My Tickets</a>
+        </div>
+        
+        <div class="footer">
+            <p>Thank you for choosing Eventify!</p>
+            <p>If you have any questions, please contact us at <a href="mailto:eventify.feedback@gmail.com">eventify.feedback@gmail.com</a></p>
+        </div>
+    </div>
+</body>
+</html>
