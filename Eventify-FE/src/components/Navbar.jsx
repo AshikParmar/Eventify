@@ -15,7 +15,7 @@ const Navbar = () => {
   const profileMenu = () => (
     <div className="flex items-center justify-center">
       <NavLink
-        to={"/user/profile"}
+        to={user?.role === "Admin" ? "admin/settings" : "/user/profile"}
         onClick={() => setMobileMenuOpen(false)}
         className={({ isActive }) => `hover:text-blue-400 transition duration-300 px-2 ${isActive ? "sm:border-b-2 sm:border-blue-600 sm:font-semibold" : ""}`
         }
