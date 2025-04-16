@@ -46,8 +46,8 @@ const TicketCard = ({ ticket }) => {
           </div>
 
           <div className="flex justify-center sm:justify-start mt-3 text-gray-600 text-sm">
-            <div className="border-r pr-3 mr-3">
-              <p className="font-bold">{ticket.totalPrice === 0 ? "Free" : `$${ticket.totalPrice}`}</p>
+            <div className="border-r pr-3 mr-3 text-right">
+              <p className="font-bold">{ticket.totalPrice === 0 ? "Free" : `Rs. ${ticket.totalPrice}`}</p>
               <p>Price</p>
             </div>
             <div>
