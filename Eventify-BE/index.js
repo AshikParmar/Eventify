@@ -42,7 +42,6 @@ app.use("/user", userRoute);
 app.use("/events", eventRoute);
 app.use("/email", emailRoutes);
 app.use("/password", passwordRoutes); 
-app.use("/payment", checkoutRoutes); 
 app.use("/api", cronJobRoutes);
 
 app.listen(PORT, () => {
