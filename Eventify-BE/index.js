@@ -18,16 +18,16 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-
-app.use("/payment", checkoutRoutes); 
-
-app.use(express.json());
-
 app.use(cors({
     origin: "*", 
     methods: ["GET", "POST", "PUT", "DELETE"], 
     credentials: true 
 }));
+
+app.use("/payment", checkoutRoutes); 
+
+app.use(express.json());
+
 
 // Set the view engine and the absolute path for views
 app.set('view engine', 'ejs');

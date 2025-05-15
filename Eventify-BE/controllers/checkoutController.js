@@ -8,6 +8,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 export const createCheckoutSession = async (req, res) => {
   const { eventId, userId, amount, quantity } = req.body;
   const event = req._validatedEvent;
+  const user = req.user;
 
   try {
     const session = await stripe.checkout.sessions.create({
@@ -25,7 +26,7 @@ export const createCheckoutSession = async (req, res) => {
           quantity,
         },  
       ],
-      customer_email: userEmail,
+      customer_email: user.email,
       metadata: { eventId, userId, amount, quantity },
       success_url: `${process.env.CLIENT_URL}/payment/success`,
       cancel_url: `${process.env.CLIENT_URL}/payment/cancel`,
@@ -37,6 +38,7 @@ export const createCheckoutSession = async (req, res) => {
       data: { sessionId: session.id },
     });
   } catch (error) {
+    console.log("error",error)
     res.status(500).json({
       success: false,
       message: error.message || "Failed to create checkout session",
