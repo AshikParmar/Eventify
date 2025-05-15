@@ -30,18 +30,43 @@ export const joinEvent = async (userId, eventId, ticketCount, totalPrice) => {
 };
 
 
+export const createCheckoutSession = async ({ eventId, userId, amount, quantity }) => {
+  try {
+    const { data } = await axios.post(`${API_URL}/payment/create-checkout-session`, {
+      eventId,
+      userId,
+      amount,
+      quantity,
+    }, {
+      headers: {
+        "authorization": authHeader(),
+      },
+    });
+
+    return {
+      success: data.success,
+      sessionId: data?.data?.sessionId,
+      message: data?.message,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: error?.response?.data?.message || error.message || "Failed to create checkout session",
+    };
+  }
+};
 
 export const getUserTickets = async () => {
 
   try {
-      const res = await axios.get(`${USER_URL}/tickets`,{
-        headers: {
-          "authorization": authHeader(),
-        },
-      });
+    const res = await axios.get(`${USER_URL}/tickets`, {
+      headers: {
+        "authorization": authHeader(),
+      },
+    });
 
-      return res.data;
+    return res.data;
   } catch (err) {
-      return err.response?.data || "Error in get Tickets";
+    return err.response?.data || "Error in get Tickets";
   }
 }

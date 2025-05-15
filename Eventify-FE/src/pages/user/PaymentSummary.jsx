@@ -3,13 +3,17 @@ import { IoMdArrowBack } from "react-icons/io";
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useGlobalUI } from '../../components/Global/GlobalUIContext';
-import { joinEvent } from "../../redux/services/eventJoin";
+import { createCheckoutSession, joinEvent } from "../../redux/services/eventJoin";
+import { loadStripe } from "@stripe/stripe-js";
+import axios from "axios";
+
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
 const PaymentSummary = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const { showSnackbar, showDialog } = useGlobalUI();
+  const { showSnackbar } = useGlobalUI();
 
   const { events, loading } = useSelector((state) => state.event);
   const { user } = useSelector((state) => state.user);
@@ -25,33 +29,66 @@ const PaymentSummary = () => {
     }
   }, [id, events]);
 
-  const handlePayment = async (e) => {
+  const handleJoinOrPay = async (e) => {
     e.preventDefault();
+
     if (!event || !user) {
       alert("Event or user details are missing.");
       return;
     }
 
-    const eventDate = new Date(event.date); 
+    const eventDate = new Date(event.date);
     const currentDate = new Date();
 
     if (eventDate <= currentDate) {
-        showSnackbar("You cannot enroll in past events!", "error");
-        return;
+      showSnackbar("You cannot enroll in past events!", "error");
+      return;
     }
 
     setIsProcessing(true);
 
     try {
-      const response = await joinEvent(user._id, event._id, ticketCount, totalPrice);
-      if (!response.success) {
-        showSnackbar(response?.message, "error");
+      console.log(("totalPrice",totalPrice))
+      if (totalPrice === 0) {
+        // Free Event — Direct Join
+        const response = await joinEvent(user._id, event._id, ticketCount, 0);
+
+        if (!response.success) {
+          showSnackbar(response.message, "error");
+        } else {
+          showSnackbar(response.message || "Successfully joined!", "success");
+          navigate("/user/my-tickets");
+        }
+
+      } else {
+        // Paid Event — Stripe Checkout
+        const stripe = await stripePromise;
+
+      if (!stripe) {
+        showSnackbar("Stripe failed to load", "error");
+        return;
       }
 
-      showSnackbar(response?.message, "success");
-      navigate("/user/my-tickets"); 
+      // Call the createCheckoutSession service function
+      const { success, sessionId, message } = await createCheckoutSession({
+        eventId: event._id,
+        userId: user._id,
+        amount: event.price,
+        quantity: ticketCount,
+      });
+
+      if (success && sessionId) {
+        const result = await stripe.redirectToCheckout({ sessionId });
+
+        if (result.error) {
+          showSnackbar(result.error.message || "Payment failed", "error");
+        }
+      } else {
+        showSnackbar(message || "Failed to create checkout session", "error");
+      }
+    }
     } catch (error) {
-      showSnackbar(error.message || "Failed to Join Event.", "error");
+      showSnackbar(error.message || "Something went wrong", "error");
     } finally {
       setIsProcessing(false);
     }
@@ -90,30 +127,29 @@ const PaymentSummary = () => {
           <div className="mt-4 space-y-4">
             <input
               type="text"
-              name="name"
               value={user?.username || ""}
               disabled
               className="w-full p-3 border rounded-md bg-gray-100"
             />
             <input
               type="email"
-              name="email"
               value={user?.email || ""}
               disabled
               className="w-full p-3 border rounded-md bg-gray-100"
             />
           </div>
 
-          {/* Make Payment Button */}
+          {/* Payment Button */}
           <div className="mt-8">
             <p className="text-lg font-semibold pb-2">Total: INR. {totalPrice}</p>
             <button
-              onClick={handlePayment}
-              className={`w-full py-3 text-white font-bold rounded-md transition ${isProcessing ? "bg-gray-500 cursor-not-allowed" : "bg-blue-700 hover:bg-blue-800"
-                }`}
+              onClick={handleJoinOrPay}
+              className={`w-full py-3 text-white font-bold rounded-md transition ${
+                isProcessing ? "bg-gray-500 cursor-not-allowed" : "bg-blue-700 hover:bg-blue-800"
+              }`}
               disabled={isProcessing}
             >
-              {isProcessing ? "Processing..." : totalPrice === "Free" ? "Join Event" : "Make Payment"}
+              {isProcessing ? "Processing..." : totalPrice === 0 ? "Join Event" : "Make Payment"}
             </button>
           </div>
         </div>

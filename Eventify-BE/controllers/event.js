@@ -2,6 +2,7 @@
 import Event from "../models/event.js";
 import { uploadToCloudinary } from "../services/cloudinary.js";
 import { sendEventConfirmation } from "../services/emailService.js";
+import { joinEventInternal } from "../utils/JoinEventHelper.js";
 import { createTicket } from "./ticket.js";
 
 // Create Event
@@ -139,51 +140,20 @@ export const deleteEvent = async (req, res) => {
 
 
 export const joinEvent = async (req, res) => {
-    try {
-        const user = req.user;
-        const { eventId, userId, numberOfTickets, totalPrice } = req.body;
+  try {
+    const { eventId, userId, numberOfTickets, totalPrice } = req.body;
+    const event = req._validatedEvent;
+    const user = req.user;
 
-        if (!eventId) {
-            return res.status(400).json({ success: false, message: "Event ID is required" });
-        }
+    const result = await joinEventInternal({
+      user,
+      event,
+      numberOfTickets,
+      totalPrice,
+    });
 
-        if (!eventId.match(/^[0-9a-fA-F]{24}$/)) {
-            return res.status(400).json({ success: false, message: "Invalid Event ID" });
-        }
-
-        const event = await Event.findById(eventId);
-
-        if (!event) return res.status(404).json({ success: false, message: "Event not found" });
-
-        if (event.participants.includes(userId)) {
-            return res.status(400).json({ success: false, message: "User already joined this event" });
-        }
-
-        if (event.availableSlots <= 0) {
-            return res.status(400).json({ success: false, message: "No available slots" });
-        }
-
-        const newTicket = await createTicket(user, event, numberOfTickets, totalPrice);
-
-        event.participants.push(userId);
-        event.tickets.push(newTicket._id);
-        event.availableSlots -= numberOfTickets;
-        await event.save();
-
-        user.myTickets.push(newTicket._id);
-        await user.save();
-
-        // Send confirmation email
-        sendEventConfirmation(user, event, newTicket, numberOfTickets, totalPrice)
-            .catch(err => console.error("Failed to send confirmation email:", err));
-
-        res.status(200).json({
-            success: true,
-            message: "User joined the event successfully",
-            ticket: newTicket
-        });
-
-    } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
-    }
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
 };
