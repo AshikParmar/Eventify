@@ -28,6 +28,8 @@ import ResetPassword from "./pages/public/ResetPassword";
 import CalendarPage from "./pages/public/CalendarPage";
 import ViewUserPage from "./components/admin/ViewUser";
 import ScrollToTop from "./components/Global/ScrollToTop";
+import PaymentSuccess from "./pages/user/PaymentSuccess";
+import PaymentCancelled from "./pages/user/PaymentCancelled";
 
 function App() {
   const user = useSelector(state => state.user.user);
@@ -75,6 +77,8 @@ function App() {
                 <Route path="/events/:id/ordersummary" element={<OrderSummary />} />
                 <Route path="/events/:id/ordersummary/paymentsummary" element={<PaymentSummary />} />
                 <Route path="/user/*" element={<UserProfile />} />
+                <Route path="/payment/success" element={<PaymentSuccess />} />
+                <Route path="/payment/cancel" element={<PaymentCancelled />} />
               </>
             )}
             {/* Always Accessible Routes */}

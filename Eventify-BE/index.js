@@ -8,6 +8,7 @@ import emailRoutes from "./routers/email.js";
 import passwordRoutes from "./routers/password.js";
 import cronJobRoutes from "./routers/cron-job.js";
 import eventStatusUpdate from "./services/cronJob.js";
+import checkoutRoutes from "./routers/checkoutRoutes.js"
 
 import { fileURLToPath } from "url";
 import path from "path";
@@ -17,13 +18,16 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-app.use(express.json());
-
 app.use(cors({
     origin: "*", 
     methods: ["GET", "POST", "PUT", "DELETE"], 
     credentials: true 
 }));
+
+app.use("/payment", checkoutRoutes); 
+
+app.use(express.json());
+
 
 // Set the view engine and the absolute path for views
 app.set('view engine', 'ejs');
@@ -38,6 +42,7 @@ app.use("/user", userRoute);
 app.use("/events", eventRoute);
 app.use("/email", emailRoutes);
 app.use("/password", passwordRoutes); 
+app.use("/payment", checkoutRoutes); 
 app.use("/api", cronJobRoutes);
 
 app.listen(PORT, () => {
