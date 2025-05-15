@@ -49,7 +49,7 @@ export const createCheckoutSession = async (req, res) => {
 
 export const handleStripeWebhook = async (req, res) => {
   const sig = req.headers['stripe-signature'];
-
+  console.log("we are in handleStripeWebhook");
   let event;
 
   try {
